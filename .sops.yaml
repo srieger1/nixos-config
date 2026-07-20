@@ -1,0 +1,10 @@
+keys:
+  - &cardassia3 age1su43swgvsty72j26yp5yf0tqd2crrfq98dmjjwm5w92l4m2luf3qtzfnry  # derived from /etc/ssh/ssh_host_ed25519_key
+  - &admin age1dz8z34r4aktjtgngxqqxyv25n20anhdrwq3fqv5jh8gw2xg8edqsz5fcqq       # caladan admin key (~/.config/sops/age/keys.txt)
+
+creation_rules:
+  - path_regex: secrets/cardassia3\.yaml$
+    key_groups:
+      - age:
+          - *cardassia3
+          - *admin

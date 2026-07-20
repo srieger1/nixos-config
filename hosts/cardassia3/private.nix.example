@@ -1,0 +1,13 @@
+# Copy this file to private.nix and fill in actual values.
+# private.nix is gitignored — never commit it.
+{
+  nextcloudHostname = "your.nextcloud.domain.example";
+  collaboraHostname = "your.collabora.domain.example";
+  cloudflareTunnelId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
+  acmeEmail = "your@email.example.com";
+  staticIp = "192.168.x.x";
+  gateway = "192.168.x.1";
+  nameservers = [ "192.168.x.x" "192.168.x.x" ];
+  lanSubnet = "192.168.x.";
+  trustedProxies = [ "x.x.x.x" "xxxx:xxxx::x" ];
+}
