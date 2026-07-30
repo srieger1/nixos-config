@@ -81,6 +81,5 @@
     #(import ./pympress)
     #(import ./ghostty)
     #(import ./wireplumber)
-    (import ./omp)
   ];
 }

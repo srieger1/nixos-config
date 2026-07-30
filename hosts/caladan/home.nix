@@ -16,6 +16,7 @@
     #../../modules/home-manager/gtk
     ../../modules/home-manager/gnome
     ../../modules/home-manager/nextcloud-client.nix
+    ../../modules/home-manager/omp
   ];
 
   # This value determines the Home Manager release that your configuration is
