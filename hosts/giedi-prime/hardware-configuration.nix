@@ -50,20 +50,20 @@
 
   hardware.logitech.wireless.enable = true;
 
-  #hardware.printers = {
-  #  ensurePrinters = [
-  #    {
-  #      name = "Kyocera-TASKalfa-5053ci-KPDL";
-  #      location = "Home";
-  #      deviceUri = "ipp://xxx/ipp/Print2Follow";
-  #      model = "drv:///sample.drv/generic.ppd";
-  #      #model = "../../modules/ppds/en_Kyocera_TASKalfa_5053ci(Mitarbeiter).ppd";
-  #      ppdOptions = {
-  #      PageSize = "A4";
-  #      User = "xxx";
-  #      };
-  #    }
-  #  ];
-  #  ensureDefaultPrinter = "Kyocera-TASKalfa-5053ci-KPDL";
-  #};
+  hardware.printers = {
+    ensurePrinters = [
+      {
+        name = "Kyocera-TASKalfa-5053ci-KPDL";
+        location = "Home";
+        deviceUri = "ipp://xxx/ipp/Print2Follow";
+        model = "drv:///sample.drv/generic.ppd";
+        #model = "../../modules/ppds/en_Kyocera_TASKalfa_5053ci(Mitarbeiter).ppd";
+        ppdOptions = {
+        PageSize = "A4";
+        User = "xxx";
+        };
+      }
+    ];
+    ensureDefaultPrinter = "Kyocera-TASKalfa-5053ci-KPDL";
+  };
 }
