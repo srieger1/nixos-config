@@ -12,6 +12,11 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
 
+    omp-nix = {
+      url = "github:yuxqiu/omp-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";

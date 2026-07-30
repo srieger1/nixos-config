@@ -69,12 +69,33 @@
         "type": "github"
       }
     },
+    "omp-nix": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785290896,
+        "narHash": "sha256-xy0vDW7uvI2k+6EzDRWOd8SOTkBY5I6lXlnPbj1KIhg=",
+        "owner": "yuxqiu",
+        "repo": "omp-nix",
+        "rev": "0e3c5ba7db42847772ee709938a5fe2497216133",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yuxqiu",
+        "repo": "omp-nix",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "home-manager": "home-manager",
         "nix-flatpak": "nix-flatpak",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "omp-nix": "omp-nix",
         "sops-nix": "sops-nix"
       }
     },
