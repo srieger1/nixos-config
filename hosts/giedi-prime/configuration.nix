@@ -326,6 +326,14 @@
     # Note: maximum expire time is 90 days
   };
 
+  # printing kyocera
+  services.printing = {
+    enable = true;
+    drivers = [
+      pkgs.cups-kyodialog
+    ];
+  };
+
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
 
