@@ -83,7 +83,13 @@
   services.flatpak.enable = true;
 
   # Enable CUPS to print documents.
-  services.printing.enable = true;
+  #services.printing.enable = true;
+  services.printing = {
+    enable = true;
+    drivers = [
+      pkgs.cups-kyodialog # kyocera
+    ];
+  };
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -324,14 +330,6 @@
     # If you would like to use a preauthorized key, set
     # authKeyFile = "/run/secrets/tailscale_key";
     # Note: maximum expire time is 90 days
-  };
-
-  # printing kyocera
-  services.printing = {
-    enable = true;
-    drivers = [
-      pkgs.cups-kyodialog
-    ];
   };
 
   # Enable the OpenSSH daemon.
