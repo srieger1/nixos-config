@@ -9,7 +9,7 @@
     subfiles setspace soul
     #(setq org-latex-compiler "lualatex")
     #(setq org-preview-latex-default-process 'dvisvgm)
-  ])
+  ]);
 
   home.packages = [ mytexlive ];
 }
