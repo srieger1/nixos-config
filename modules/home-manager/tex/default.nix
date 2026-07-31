@@ -1,5 +1,4 @@
-{ config, pkgs, ... }:
-let
+{ config, pkgs, ... }: {
   mytexlive = pkgs.texliveSmall.withPackages (ps: with ps; [
     scheme-basic
     dvisvgm dvipng # for preview and export as html
@@ -11,5 +10,6 @@ let
     #(setq org-latex-compiler "lualatex")
     #(setq org-preview-latex-default-process 'dvisvgm)
   ])
-in:
+
   home.packages = [ mytexlive ];
+}
