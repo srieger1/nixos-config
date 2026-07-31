@@ -10,4 +10,4 @@ texliveSmall.withPackages (ps: with ps; [
     #(setq org-latex-compiler "lualatex")
     #(setq org-preview-latex-default-process 'dvisvgm)
   ]
-);
+)
