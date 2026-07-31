@@ -45,7 +45,7 @@
     pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
   in {
     nixosConfigurations = {
-      caladan = nixpkgs.lib.nixosSystem {
+      caladan = nixpkgs-unstable.lib.nixosSystem {
         inherit system;
         specialArgs = {inherit inputs pkgsUnstable;};
         modules = [

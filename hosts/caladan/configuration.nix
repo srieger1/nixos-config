@@ -475,6 +475,10 @@
   users.users.root.extraGroups = [ "frrvty" ];
 
   home-manager = {
+    # caladan runs the whole system on nixos-unstable now; reuse the
+    # system's pkgs (unstable) for home-manager instead of home-manager's
+    # own nixpkgs input (still pinned to stable), so user packages match.
+    useGlobalPkgs = true;
     # also pass inputs to home-manager modules
     extraSpecialArgs = { inherit inputs; };
     backupFileExtension = "backup";
