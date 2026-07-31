@@ -10,6 +10,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # home-manager's `master` branch is the one meant to track
+    # nixpkgs-unstable (release-XX.YY branches pair with the matching
+    # stable nixos-XX.YY). Used only for caladan, which runs unstable.
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
 
     omp-nix = {
@@ -50,7 +58,7 @@
         specialArgs = {inherit inputs pkgsUnstable;};
         modules = [
           ./hosts/caladan/configuration.nix
-          inputs.home-manager.nixosModules.default
+          inputs.home-manager-unstable.nixosModules.default
           inputs.nix-flatpak.nixosModules.nix-flatpak
           #./modules/nixos/kitty/default.nix
           #./hosts
