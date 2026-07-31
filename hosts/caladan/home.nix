@@ -15,6 +15,7 @@
     ../../modules/home-manager/tex
     #../../modules/home-manager/gtk
     ../../modules/home-manager/gnome
+    ../../modules/home-manager/niri
     ../../modules/home-manager/nextcloud-client.nix
     ../../modules/home-manager/omp
   ];
