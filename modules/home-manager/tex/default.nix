@@ -1,5 +1,6 @@
 { config, pkgs, ... }:
-texliveSmall.withPackages (ps: with ps; [
+let
+  mytexlive = pkgs.texliveSmall.withPackages (ps: with ps; [
     scheme-basic
     dvisvgm dvipng # for preview and export as html
     wrapfig amsmath ulem hyperref capt-of # default from example in nixos wiki
@@ -9,5 +10,6 @@ texliveSmall.withPackages (ps: with ps; [
     subfiles setspace soul
     #(setq org-latex-compiler "lualatex")
     #(setq org-preview-latex-default-process 'dvisvgm)
-  ]
-)
+  ])
+in:
+  home.packages = [ mytexlive ];
