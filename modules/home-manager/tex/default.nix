@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  tex = (pkgs.texlive.combine {
+  tex = (pkgs.texliveSmall.withPackages {
     inherit (pkgs.texlive) scheme-basic
       dvisvgm dvipng # for preview and export as html
       wrapfig amsmath ulem hyperref capt-of # default from example in nixos wiki
