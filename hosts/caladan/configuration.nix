@@ -133,10 +133,10 @@
   # Enable networking
   networking.networkmanager.enable = true;
   #networking.hostFiles = [ "/etc/hosts.clab" ];
-  #networking.networkmanager.plugins = [
-  #  pkgs.networkmanager-openconnect
+  networking.networkmanager.plugins = [
+    pkgs.networkmanager-openconnect
   #  pkgs.networkmanager-openvpn
-  #];
+  ];
 
   # Set your time zone.
   #time.timeZone = "Europe/Berlin";
@@ -734,7 +734,7 @@
     dnsmasq
     ebtables
     bridge-utils
-    networkmanager-openconnect # still needed for 42cluster
+    #networkmanager-openconnect # still needed for 42cluster
     #lan-mouse_git # chaotic # dead
     lan-mouse
     #gnomeExtensions.appindicator
