@@ -734,7 +734,7 @@
     dnsmasq
     ebtables
     bridge-utils
-    #networkmanager-openconnect
+    networkmanager-openconnect # still needed for 42cluster
     #lan-mouse_git # chaotic # dead
     lan-mouse
     #gnomeExtensions.appindicator
