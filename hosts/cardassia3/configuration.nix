@@ -14,6 +14,7 @@
       ./samba.nix
       ./ddclient.nix
       ./linkding.nix
+      ./rtmp.nix
       #./unifi.nix
     ];
 
