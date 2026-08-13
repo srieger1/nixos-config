@@ -80,7 +80,7 @@
     };
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "/usr/bin/rmmod ath11k_pci";
+      ExecStart = "${pkgs.kmod}/bin/rmmod ath11k_pci";
     };
     wantedBy = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
   };
@@ -93,9 +93,37 @@
     };
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "/usr/bin/modprobe ath11k_pci";
+      ExecStart = "${pkgs.kmod}/bin/modprobe ath11k_pci";
     };
     wantedBy = [ "suspend.target" "suspend-then-hibernate.target" "hibernate.target" "hybrid-sleep.target" ];
+  };
+
+  # XHC0 (the USB-C xHCI host controller, pci:0000:c3:00.3) fires spurious
+  # ACPI wakeup events that immediately abort s2idle suspend (system wakes
+  # ~1s after entering sleep, confirmed via `PM: Triggering wakeup from
+  # IRQ 7`/"ACPI non-EC GPE wakeup" in dmesg with pm_debug_messages=1, and
+  # reproduced by toggling `echo XHC0 > /proc/acpi/wakeup`). The udev rule
+  # sets the baseline at device-add time, but xhci_pci's probe() can
+  # re-enable wakeup after that (add-event/probe ordering isn't
+  # guaranteed), so also force it off right before every suspend, same
+  # pattern as ath11k-suspend above.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="pci", KERNEL=="0000:c3:00.3", ATTR{power/wakeup}="disabled"
+  '';
+
+  systemd.services.xhci-wakeup-disable = {
+    enable = true;
+    description = "Suspend: force-disable XHC0 ACPI wakeup";
+    unitConfig = {
+      Before = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    };
+    serviceConfig = {
+      Type = "oneshot";
+    };
+    script = ''
+      echo disabled > /sys/bus/pci/devices/0000:c3:00.3/power/wakeup
+    '';
+    wantedBy = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
   };
 
   # Configure network proxy if necessary
@@ -105,10 +133,10 @@
   # Enable networking
   networking.networkmanager.enable = true;
   #networking.hostFiles = [ "/etc/hosts.clab" ];
-  #networking.networkmanager.plugins = [
-  #  pkgs.networkmanager-openconnect
+  networking.networkmanager.plugins = [
+    pkgs.networkmanager-openconnect # still needed for 42cluster
   #  pkgs.networkmanager-openvpn
-  #];
+  ];
 
   # Set your time zone.
   #time.timeZone = "Europe/Berlin";
@@ -154,6 +182,17 @@
   #services.xserver.desktopManager.xfce.enable = true;
   #services.desktopManager.plasma6.enable = true;
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
+
+  # niri: scrollable-tiling Wayland compositor, offered as an alternative
+  # session to GNOME from the same GDM login screen (no DM change needed —
+  # GDM already lists every registered Wayland session). Paired with
+  # noctalia-shell (see modules/home-manager/niri) for bar/launcher/lock.
+  # https://wiki.nixos.org/wiki/Niri
+  programs.niri.enable = true;
+  # Explicit here since niri's setup guide calls it out directly; GNOME's
+  # module already enables it as a side effect, so this is a no-op for now
+  # but keeps niri working standalone if GNOME is ever removed.
+  security.polkit.enable = true;
 
 
   # Configure keymap in X11
@@ -475,6 +514,10 @@
   users.users.root.extraGroups = [ "frrvty" ];
 
   home-manager = {
+    # caladan runs the whole system on nixos-unstable now; reuse the
+    # system's pkgs (unstable) for home-manager instead of home-manager's
+    # own nixpkgs input (still pinned to stable), so user packages match.
+    useGlobalPkgs = true;
     # also pass inputs to home-manager modules
     extraSpecialArgs = { inherit inputs; };
     backupFileExtension = "backup";
@@ -691,7 +734,6 @@
     dnsmasq
     ebtables
     bridge-utils
-    #networkmanager-openconnect
     #lan-mouse_git # chaotic # dead
     lan-mouse
     #gnomeExtensions.appindicator
@@ -699,6 +741,9 @@
     #libappindicator-gtk2
     #libappindicator-gtk3
     #kdePackages.breeze-gtk
+    # niri session (see programs.niri.enable above)
+    noctalia-shell # bar/launcher/control-center/lock-screen, spawned from niri config.kdl
+    xwayland-satellite # XWayland app support under niri, https://wiki.nixos.org/wiki/Niri#XWayland_apps_not_working
   ];
 
   # conflicts with services.power-profiles-daemon.enable = true;

@@ -1,0 +1,6 @@
+# Copy this file to private.nix and fill in actual values.
+# private.nix is gitignored — never commit it.
+{
+  printerDeviceUri = "ipp://printserver.example.com/ipp/Print2Follow";
+  printerUser = "your-username";
+}

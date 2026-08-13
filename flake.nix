@@ -10,7 +10,20 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # home-manager's `master` branch is the one meant to track
+    # nixpkgs-unstable (release-XX.YY branches pair with the matching
+    # stable nixos-XX.YY). Used only for caladan, which runs unstable.
+    home-manager-unstable = {
+      url = "github:nix-community/home-manager/master";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
+
+    omp-nix = {
+      url = "github:yuxqiu/omp-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -40,12 +53,12 @@
     pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
   in {
     nixosConfigurations = {
-      caladan = nixpkgs.lib.nixosSystem {
+      caladan = nixpkgs-unstable.lib.nixosSystem {
         inherit system;
         specialArgs = {inherit inputs pkgsUnstable;};
         modules = [
           ./hosts/caladan/configuration.nix
-          inputs.home-manager.nixosModules.default
+          inputs.home-manager-unstable.nixosModules.default
           inputs.nix-flatpak.nixosModules.nix-flatpak
           #./modules/nixos/kitty/default.nix
           #./hosts
@@ -53,21 +66,27 @@
           #chaotic.nixosModules.default
         ];
       };
-      giedi-prime = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs pkgsUnstable;};
-        #inputs.nixpkgs.follows = "nixpkgs-unstable";
-        #inputs.home-manager.nixpkgs.follows = "nixpkgs-stable";
-        modules = [
-          ./hosts/giedi-prime/configuration.nix
-          inputs.home-manager.nixosModules.default
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          #./modules/nixos/kitty/default.nix
-          #./hosts
-          (import ./overlays)
-          #chaotic.nixosModules.default
-        ];
-      };
+      giedi-prime =
+        let
+          private =
+            if builtins.pathExists ./hosts/giedi-prime/private.nix
+            then import ./hosts/giedi-prime/private.nix
+            else import ./hosts/giedi-prime/private.nix.example;
+        in nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {inherit inputs pkgsUnstable private;};
+          #inputs.nixpkgs.follows = "nixpkgs-unstable";
+          #inputs.home-manager.nixpkgs.follows = "nixpkgs-stable";
+          modules = [
+            ./hosts/giedi-prime/configuration.nix
+            inputs.home-manager.nixosModules.default
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+            #./modules/nixos/kitty/default.nix
+            #./hosts
+            (import ./overlays)
+            #chaotic.nixosModules.default
+          ];
+        };
       cardassia3 =
         let
           private =
