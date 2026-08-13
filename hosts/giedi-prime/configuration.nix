@@ -84,6 +84,12 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  #services.printing = {
+  #  enable = true;
+  #  drivers = [
+  #    pkgs.cups-kyodialog # kyocera
+  #  ];
+  #};
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -327,7 +333,7 @@
   };
 
   # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
+  services.openssh.enable = true;
 
   virtualisation.docker.enable = true;
   users.extraGroups.docker.members = [ "flex" ];

@@ -1,3 +1,4 @@
 log
 CLAUDE.md
 hosts/cardassia3/private.nix
+modules/ppds
