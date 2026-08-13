@@ -71,7 +71,7 @@
           private =
             if builtins.pathExists ./hosts/giedi-prime/private.nix
             then import ./hosts/giedi-prime/private.nix
-            else import ./hosts/giedi-prime/private.nix.example;
+            #else import ./hosts/giedi-prime/private.nix.example;
         in nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {inherit inputs pkgsUnstable private;};
