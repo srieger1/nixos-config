@@ -66,21 +66,27 @@
           #chaotic.nixosModules.default
         ];
       };
-      giedi-prime = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs pkgsUnstable;};
-        #inputs.nixpkgs.follows = "nixpkgs-unstable";
-        #inputs.home-manager.nixpkgs.follows = "nixpkgs-stable";
-        modules = [
-          ./hosts/giedi-prime/configuration.nix
-          inputs.home-manager.nixosModules.default
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          #./modules/nixos/kitty/default.nix
-          #./hosts
-          (import ./overlays)
-          #chaotic.nixosModules.default
-        ];
-      };
+      giedi-prime =
+        let
+          private =
+            if builtins.pathExists ./hosts/giedi-prime/private.nix
+            then import ./hosts/giedi-prime/private.nix
+            else import ./hosts/giedi-prime/private.nix.example;
+        in nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = {inherit inputs pkgsUnstable private;};
+          #inputs.nixpkgs.follows = "nixpkgs-unstable";
+          #inputs.home-manager.nixpkgs.follows = "nixpkgs-stable";
+          modules = [
+            ./hosts/giedi-prime/configuration.nix
+            inputs.home-manager.nixosModules.default
+            inputs.nix-flatpak.nixosModules.nix-flatpak
+            #./modules/nixos/kitty/default.nix
+            #./hosts
+            (import ./overlays)
+            #chaotic.nixosModules.default
+          ];
+        };
       cardassia3 =
         let
           private =

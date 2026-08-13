@@ -1,4 +1,5 @@
 log
 CLAUDE.md
 hosts/cardassia3/private.nix
+hosts/giedi-prime/private.nix
 modules/ppds
