@@ -91,7 +91,8 @@
     description = "Sebastian Rieger";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-      htop 
+      htop
+      nh
     ];
   };
 

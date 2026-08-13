@@ -51,6 +51,22 @@
     lib = nixpkgs.lib;
     #pkgs = nixpkgs.legacyPackages.${system};
     pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
+
+    # Secrets/host-specific values that must never land in the (public) git
+    # repo. Flakes only see git-tracked files, so gitignoring a file in-repo
+    # isn't enough — it silently falls back to the checked-in .example.
+    # The real file lives at an absolute path outside the repo, keyed off
+    # $HOME so it resolves correctly whichever user builds the flake (flex
+    # on caladan/giedi-prime/cardassia3). Reading it needs `--impure` too,
+    # since pure eval also refuses external absolute paths (already set in
+    # update.sh / rebuild-switch.sh).
+    privateFor = host:
+      let
+        path = builtins.toPath (builtins.getEnv "HOME" + "/.config/flexos-private/${host}.nix");
+      in
+      if builtins.pathExists path
+      then import path
+      else import ./hosts/${host}/private.nix.example;
   in {
     nixosConfigurations = {
       caladan = nixpkgs-unstable.lib.nixosSystem {
@@ -66,44 +82,30 @@
           #chaotic.nixosModules.default
         ];
       };
-      giedi-prime =
-        let
-          private =
-            if builtins.pathExists ./hosts/giedi-prime/private.nix
-            then import ./hosts/giedi-prime/private.nix
-            else import ./hosts/giedi-prime/private.nix.example;
-        in nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {inherit inputs pkgsUnstable private;};
-          #inputs.nixpkgs.follows = "nixpkgs-unstable";
-          #inputs.home-manager.nixpkgs.follows = "nixpkgs-stable";
-          modules = [
-            ./hosts/giedi-prime/configuration.nix
-            inputs.home-manager.nixosModules.default
-            inputs.nix-flatpak.nixosModules.nix-flatpak
-            #./modules/nixos/kitty/default.nix
-            #./hosts
-            (import ./overlays)
-            #chaotic.nixosModules.default
-          ];
-        };
-      cardassia3 =
-        let
-          private =
-            if builtins.pathExists ./hosts/cardassia3/private.nix
-            then import ./hosts/cardassia3/private.nix
-            else import ./hosts/cardassia3/private.nix.example;
-        in nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = {inherit inputs pkgsUnstable self private;};
-          modules = [
-            ./hosts/cardassia3/configuration.nix
-            ./hosts/cardassia3/sops.nix
-            inputs.home-manager.nixosModules.default
-            inputs.sops-nix.nixosModules.sops
-            (import ./overlays)
-          ];
-        };
+      giedi-prime = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {inherit inputs pkgsUnstable; private = privateFor "giedi-prime";};
+        modules = [
+          ./hosts/giedi-prime/configuration.nix
+          inputs.home-manager.nixosModules.default
+          inputs.nix-flatpak.nixosModules.nix-flatpak
+          #./modules/nixos/kitty/default.nix
+          #./hosts
+          (import ./overlays)
+          #chaotic.nixosModules.default
+        ];
+      };
+      cardassia3 = nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = {inherit inputs pkgsUnstable self; private = privateFor "cardassia3";};
+        modules = [
+          ./hosts/cardassia3/configuration.nix
+          ./hosts/cardassia3/sops.nix
+          inputs.home-manager.nixosModules.default
+          inputs.sops-nix.nixosModules.sops
+          (import ./overlays)
+        ];
+      };
     };
   };
 }

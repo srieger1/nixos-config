@@ -1,5 +1,13 @@
-# Copy this file to private.nix and fill in actual values.
-# private.nix is gitignored — never commit it.
+# Nix flakes only see git-tracked files inside the repo, so a gitignored
+# hosts/cardassia3/private.nix would silently be invisible to `nix build`
+# and always fall back to this example. Instead:
+#   mkdir -p ~/.config/flexos-private
+#   cp hosts/cardassia3/private.nix.example ~/.config/flexos-private/cardassia3.nix
+#   $EDITOR ~/.config/flexos-private/cardassia3.nix   # fill in real values
+# That path lives outside the repo, so it's never touched by git at all —
+# but reading an absolute path outside the flake's source also requires
+# `--impure` on the build (update.sh / rebuild-switch.sh already pass it;
+# add it yourself if you ever invoke nixos-rebuild/nh directly).
 {
   nextcloudHostname = "your.nextcloud.domain.example";
   collaboraHostname = "your.collabora.domain.example";

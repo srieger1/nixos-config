@@ -33,7 +33,7 @@ nh os info
 
 echo "===== UPDATE ===== $DATE" >>$LOG
 #nh os switch -u $FLAKE --ask | tee -a $LOG
-nh os boot $UPDATE_FLAG $FLAKE --ask | tee -a $LOG
+nh os boot $UPDATE_FLAG --impure $FLAKE --ask | tee -a $LOG
 #nh clean all --optimise --max --keep-since 14d -k 7 
 #nh clean all --keep-since 14d -k 10 
 

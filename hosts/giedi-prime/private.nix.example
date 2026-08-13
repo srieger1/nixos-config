@@ -1,5 +1,13 @@
-# Copy this file to private.nix and fill in actual values.
-# private.nix is gitignored — never commit it.
+# Nix flakes only see git-tracked files inside the repo, so a gitignored
+# hosts/giedi-prime/private.nix would silently be invisible to `nix build`
+# and always fall back to this example. Instead:
+#   mkdir -p ~/.config/flexos-private
+#   cp hosts/giedi-prime/private.nix.example ~/.config/flexos-private/giedi-prime.nix
+#   $EDITOR ~/.config/flexos-private/giedi-prime.nix   # fill in real values
+# That path lives outside the repo, so it's never touched by git at all —
+# but reading an absolute path outside the flake's source also requires
+# `--impure` on the build (update.sh / rebuild-switch.sh already pass it;
+# add it yourself if you ever invoke nixos-rebuild/nh directly).
 {
   printerDeviceUri = "ipp://printserver.example.com/ipp/Print2Follow";
   printerUser = "your-username";
