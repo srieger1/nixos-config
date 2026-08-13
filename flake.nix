@@ -69,9 +69,10 @@
       giedi-prime =
         let
           private =
-            if builtins.pathExists ./hosts/giedi-prime/private.nix
-            then import ./hosts/giedi-prime/private.nix;
+            #if builtins.pathExists ./hosts/giedi-prime/private.nix
+            #then import ./hosts/giedi-prime/private.nix
             #else import ./hosts/giedi-prime/private.nix.example;
+            import ./hosts/giedi-prime/private.nix
         in nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {inherit inputs pkgsUnstable private;};
