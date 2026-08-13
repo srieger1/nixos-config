@@ -1,4 +1,4 @@
-#!env bash
+#!/usr/bin/env bash
 #HOSTNAME=$(hostname)
 
 # needed in case of "ln: failed to create symbolic link '/nix/store/ user-units/xdg-desktop-portal-gtk.service': File exists"
