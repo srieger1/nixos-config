@@ -17,7 +17,7 @@
           hash = "sha256-dDIG3Hfx24H9AkzSFgwzPeNeoX89kO2RzW8iNyKyrC0="; # 0.78.2
         };
         # to get vendorHash:
-        vendorHash = "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+        #vendorHash = "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
         ##vendorHash = prev.lib.fakeHash;
         #vendorHash = "sha256-XttJ/GXhNKVHLR33A/o3N3OYHsyKWHBhD5QOz0AlfFk="; # 0.72.0
         #vendorHash = "sha256-oyWoyVq2LM5Dhi6REFSrtbtFR4HtyeJvsbrZeY2nxkI="; # 0.73
@@ -26,6 +26,7 @@
         #vendorHash = "sha256-NOw57ly/RhH7g98uMDQyZ8cUsnvjl14oc75VQMROPgY="; # 0.75.0
         #vendorHash = "sha256-US8y4AlO9fMD7bogIPT6bsrSsUx7c6X1Y0ooHiQ6WUc="; # 0.76.0
         #vendorHash = "sha256-EPkztm+7LgSB58ZFKViW4qlGhw+9zSNlJa4AKsZPfzs="; # 0.77.0
+        vendorHash = "sha256-kRBYjxirApj91hNBz3a+NyRm8SqRTVeQQCz+JFsKY0U="; # 0.78.2
         ldflags = [
           #"-linkmode external"
           #"-extldflags '-static'"
