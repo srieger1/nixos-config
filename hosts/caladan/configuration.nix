@@ -681,7 +681,8 @@ in
   ];
 
   hardware.logitech.wireless.enable = true;
-  hardware.logitech.wireless.enableGraphical = true;
+  #hardware.logitech.wireless.enableGraphical = true; # deprecated, use programs.solaar.enable
+  programs.solaar.enable = true;
 
   # hosts file allow write for containerlab
   environment.etc.hosts.enable = false;
