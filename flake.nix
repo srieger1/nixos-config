@@ -20,10 +20,11 @@
 
     nix-flatpak.url = "github:gmodena/nix-flatpak?ref=latest";
 
-    omp-nix = {
-      url = "github:yuxqiu/omp-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # No `inputs.nixpkgs.follows` here: the numtide binary cache is only
+    # populated for llm-agents.nix's own pinned nixpkgs. Following our
+    # nixpkgs would change every package's derivation hash and force
+    # source builds (verified: differing drvPath with vs. without follows).
+    llm-agents-nix.url = "github:numtide/llm-agents.nix";
 
     sops-nix = {
       url = "github:Mic92/sops-nix";

@@ -73,6 +73,15 @@ layout {
 // lock screen and wallpaper; niri only needs to spawn it once at startup.
 spawn-at-startup "noctalia-shell"
 
+// nm-applet: noctalia doesn't register as a NetworkManager secret agent, so
+// 802-1x networks (eduroam) whose secrets are agent-owned (not stored on
+// disk) can't be supplied on reconnect without one running. nm-applet fills
+// that role and persists secrets via gnome-keyring (already running/reachable
+// here, see wrapPasswordStore comment in hosts/caladan/configuration.nix).
+// --indicator only affects the (optional) tray icon noctalia's tray widget
+// can host; the secret-agent registration works headless either way.
+spawn-at-startup "nm-applet" "--indicator"
+
 hotkey-overlay {
 }
 
@@ -135,7 +144,7 @@ overview {
 }
 
 binds {
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+ssharp { show-hotkey-overlay; }
 
     // Terminal + noctalia core binds (launcher, control center, settings).
     Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }

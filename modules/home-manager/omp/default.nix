@@ -24,7 +24,7 @@ let
 in
 {
   home.packages = [
-    inputs.omp-nix.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.omp
   ];
 
   home.file.".omp/agent/nix-config.yml".source = ompConfig;

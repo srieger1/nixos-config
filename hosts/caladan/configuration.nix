@@ -4,6 +4,21 @@
 
 { config, pkgs, inputs, ... }:
 
+let
+  # niri doesn't advertise a desktop environment Electron/libsecret recognizes
+  # (unlike the GNOME session on the same GDM login screen), so vscode/signal
+  # report "no OS keyring available" even though gnome-keyring's secret
+  # service is running and reachable (e.g. via Seahorne/GNOME Passwords).
+  # Force the gnome-libsecret backend explicitly on the wrapped binary; the
+  # .desktop files' `Exec=code %F` / `Exec=signal-desktop %U` resolve via
+  # PATH, so this also covers noctalia's app launcher.
+  wrapPasswordStore = pkg: bin: pkgs.symlinkJoin {
+    name = "${pkg.pname or pkg.name}-libsecret";
+    paths = [ pkg ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = "wrapProgram $out/bin/${bin} --add-flags --password-store=gnome-libsecret";
+  };
+in
 {
   imports =
     [
@@ -326,7 +341,7 @@
       #bitwarden-desktop
 
       # dev
-      vscode # further extensions to be defined declaratively? cline, ...?
+      (wrapPasswordStore vscode "code") # further extensions to be defined declaratively? cline, ...? forces gnome-libsecret (niri lacks XDG_CURRENT_DESKTOP electron recognizes)
       #(vscode-with-extensions.override {
       #  vscodeExtensions = with vscode-extensions; [
       #    bbenoist.nix
@@ -383,17 +398,18 @@
       element-desktop
       rocketchat-desktop
       threema-desktop
-      signal-desktop
+      (wrapPasswordStore signal-desktop "signal-desktop") # forces gnome-libsecret, see vscode wrapper comment above
       discord
       #slack
       #webex # does not work anyway currently? using browser-based webex for now
 
       # ai
       opencode
-      claude-code
+      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.dsh # deepseek-ai agent harness
       claude-monitor
       lmstudio
-      ollama-rocm
+      ollama-vulkan
 
       # conf
       #teams-for-linux
@@ -571,9 +587,17 @@
   nix.settings.trusted-users = [ "root" "flex" ];
   # better:
   nix.extraOptions = ''
-    extra-substituters = https://devenv.cachix.org https://nixpkgs-python.cachix.org 
+    extra-substituters = https://devenv.cachix.org https://nixpkgs-python.cachix.org
     extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU=
   '';
+  # binary cache for llm-agents-nix's source-typed packages (omp, dsh):
+  # avoids compiling their bun/JS dependency graph from scratch.
+  nix.settings = {
+    extra-substituters = [ "https://cache.numtide.com" ];
+    extra-trusted-public-keys = [
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    ];
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -743,6 +767,9 @@
     #kdePackages.breeze-gtk
     # niri session (see programs.niri.enable above)
     noctalia-shell # bar/launcher/control-center/lock-screen, spawned from niri config.kdl
+    networkmanagerapplet # nm-applet: NM secret agent under niri, backed by gnome-keyring
+    # (no built-in secret agent of its own reliably persists 802-1x secrets; see
+    # modules/home-manager/niri/config.kdl for the spawn-at-startup entry)
     xwayland-satellite # XWayland app support under niri, https://wiki.nixos.org/wiki/Niri#XWayland_apps_not_working
   ];
 

@@ -248,7 +248,8 @@
       solaar
       lan-mouse
       bazaar
-      claude-code
+      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
+      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.dsh # deepseek-ai agent harness
       claude-monitor
       opencode
       texstudio
@@ -294,6 +295,15 @@
   nix.settings.download-buffer-size = 524288000;
 
   nix.settings.trusted-users = [ "root" "flex" ];
+
+  # binary cache for llm-agents-nix's source-typed packages (claude-code, dsh):
+  # avoids compiling their bun/JS dependency graph from scratch.
+  nix.settings = {
+    extra-substituters = [ "https://cache.numtide.com" ];
+    extra-trusted-public-keys = [
+      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    ];
+  };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
