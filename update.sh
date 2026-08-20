@@ -26,7 +26,13 @@ UPDATE_FLAG=""
 [ "$HOSTNAME" = "caladan" ] && UPDATE_FLAG="-u"
 
 #cd ~
-pushd $FLAKE && git pull --rebase && (git commit -a -m "update" || true) && popd
+pushd $FLAKE && git pull --rebase && (git commit -a -m "update - $HOSTNAME" || true) && popd
+
+# Pull the private ssh-config sync repo (modules/home-manager/ssh reads it
+# at build time). Not fatal if it isn't cloned yet on this host — see
+# modules/home-manager/ssh/default.nix for the bootstrap command.
+PRIVATE_SYNC="$HOME/.config/flexos-private-sync"
+[ -d "$PRIVATE_SYNC/.git" ] && (cd "$PRIVATE_SYNC" && git pull --rebase)
 #~/flexos/rebuild-switch.sh
 #sudo nixos-rebuild switch --flake ~/flexos#$HOSTNAME
 nh os info
@@ -41,7 +47,10 @@ nh os boot $UPDATE_FLAG --impure $FLAKE --ask | tee -a $LOG
 #User Permission: Always run nh clean with sudo if you want to clean system-level generations. 
 
 # Commit + push the flake.lock update produced by `nh os boot -u` (caladan) so
-# the other host can `git pull` it instead of generating its own.
-pushd $FLAKE && (git commit -a -m "update" || true) && git push && popd
+# the other host can `git pull` it instead of generating its own. Gate the
+# push on `nix flake check`: `nh os boot` above only built *this* host, a
+# broken eval for a different host wouldn't be caught by that build alone,
+# and giedi-prime pulls whatever lands here.
+pushd $FLAKE && (git commit -a -m "update" || true) && (nix flake check --impure && git push || echo "nix flake check failed — not pushing" >&2) && popd
 
 nh os info

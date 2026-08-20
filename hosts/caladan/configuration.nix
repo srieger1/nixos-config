@@ -24,6 +24,9 @@ in
     [
       # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ../../modules/nixos/common.nix
+      ../../modules/nixos/desktop-common.nix
+      ../../modules/nixos/packages-common.nix
       ../../modules/nixos/test.nix
       ../../modules/nixos/thunderbolt.nix
       #../../modules/nixos/cosmic.nix
@@ -145,8 +148,7 @@ in
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+  # Enable networking (networkmanager itself is enabled in modules/nixos/desktop-common.nix)
   #networking.hostFiles = [ "/etc/hosts.clab" ];
   networking.networkmanager.plugins = [
     pkgs.networkmanager-openconnect # still needed for 42cluster
@@ -158,21 +160,6 @@ in
   services.automatic-timezoned.enable = true;
   time.hardwareClockInLocalTime = true;
 
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_US.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "de_DE.UTF-8";
-    LC_IDENTIFICATION = "de_DE.UTF-8";
-    LC_MEASUREMENT = "de_DE.UTF-8";
-    LC_MONETARY = "de_DE.UTF-8";
-    LC_NAME = "de_DE.UTF-8";
-    LC_NUMERIC = "de_DE.UTF-8";
-    LC_PAPER = "de_DE.UTF-8";
-    LC_TELEPHONE = "de_DE.UTF-8";
-    LC_TIME = "de_DE.UTF-8";
-  };
-
   #services.xserver.videoDrivers = [ "nvidia" ];
   # displaylink and/or modesetting currently breaks suspend
   #services.xserver.videoDrivers = [ "amdgpu" "displaylink" "modesetting" ];
@@ -182,18 +169,12 @@ in
   # nix-prefetch-url --name displaylink-600.zip https://www.synaptics.com/sites/default/files/exe_files/2024-05/DisplayLink%20USB%20Graphics%20Software%20for%20Ubuntu6.0-EXE.zip
   # https://nixos.wiki/wiki/Displaylink
 
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = true;
-
   #services.xserver.displayManager.sessionCommands = ''
   #  ${lib.getBin pkgs.xorg.xrandr}/bin/xrandr --setprovideroutputsource 2 0
   #'';
 
   # Enable the Desktop Environments
   #services.displayManager.sddm.enable = true;
-  services.displayManager.gdm.enable = true;
-  services.desktopManager.gnome.enable = true;
   #services.xserver.desktopManager.xfce.enable = true;
   #services.desktopManager.plasma6.enable = true;
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
@@ -209,15 +190,12 @@ in
   # but keeps niri working standalone if GNOME is ever removed.
   security.polkit.enable = true;
 
-
-  # Configure keymap in X11
-  services.xserver = {
-    #xkb.layout = "eu";
-    xkb.layout= "de";
-    #xkb.variant = "no-dead-keys";
-    xkb.variant = "";
-    xkb.options = "";
-    xkb.model = "pc105";
+  # Configure keymap in X11 (layout set in modules/nixos/desktop-common.nix)
+  services.xserver.xkb = {
+    #variant = "no-dead-keys";
+    variant = "";
+    options = "";
+    model = "pc105";
   };
 
   # xfce
@@ -229,12 +207,6 @@ in
   #  #displayManager.defaultSession = "xfce";
   #};
 
-  # Configure console keymap
-  console.keyMap = "de-latin1-nodeadkeys";
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-
   services.avahi = {
     enable = true;
     nssmdns4 = true;
@@ -244,22 +216,9 @@ in
   # https://nixos.wiki/wiki/Printing
   services.printing.drivers = [ pkgs.hplip ];
 
-  # Enable sound with pipewire.
-  #sound.enable = true;
-  services.pulseaudio.enable = false;
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  };
+  # Enable sound with pipewire. Base config (pulseaudio disabled, alsa/pulse
+  # compat) lives in modules/nixos/desktop-common.nix; jack is caladan-only.
+  services.pipewire.jack.enable = true;
 
   #services.gnome.gnome-keyring.enable = true;
   #security.pam.services = {
@@ -278,18 +237,10 @@ in
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # create group dependencies
-  users.groups.frrvty = {};
-  users.groups.clab_admins = {};
-
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.flex = {
-    isNormalUser = true;
-    description = "flex";
-    extraGroups = [ "networkmanager" "dialout" "wheel" "libvirtd" "docker" "clab_admins" ];
-    shell = pkgs.zsh;
-    #shell = pkgs.fish;
-    packages = with pkgs; [
+  users.users.flex.extraGroups = [ "dialout" ];
+
+  users.users.flex.packages = with pkgs; [
 
       # desktop
       #gnome-themes-extra
@@ -299,8 +250,6 @@ in
       gnomeExtensions.gsconnect
       gnomeExtensions.blur-my-shell
       gnomeExtensions.just-perfection
-      gnomeExtensions.tiling-assistant
-      gnomeExtensions.vitals
       gnomeExtensions.tiling-shell
       gnomeExtensions.thinkpad-thermal
       gnomeExtensions.thinkpad-battery-threshold
@@ -308,13 +257,10 @@ in
       gnomeExtensions.system-monitor-2
       #gnomeExtensions.wiggle
       #gnomeExtensions.appindicator
-      gnome-tweaks
       adwaita-icon-theme
       kora-icon-theme
       #catppuccin-cursors.mochaBlue
       #catppuccin
-      brightnessctl
-      bazaar
       #easyeffects # flatpak now
 
       # virtualization
@@ -322,12 +268,7 @@ in
       #virt-manager # enabled by virtualization. ... below
 
       # browsers
-      firefox
       #librewolf # insecure no maintainer in nix - 6/2026 
-      chromium
-
-      # mail
-      thunderbird
 
       # sync & share
       # move to home-manager?
@@ -362,26 +303,14 @@ in
       #jetbrains-toolbox 
       #jetbrains.goland # disabled, use vscode for now seems to be enough
       #jetbrains.pycharm # disabled, use vscode for now seems to be enough
-      gh
       #nodejs_20 # using devenv now
       #fnm # node version manager - using devenv now
-      gnumake
-      gcc # disable and use devenv?
-      git
       #python3 # using devenv now
       #go # using devenv now
-      rustup # disable and use devenv?
       rustc
-      cargo
-      devenv
       jdk # jameica
 
       # ops / cloud
-      openstackclient
-      terraform
-      kubectl
-      kubernetes-helm
-      awscli2
       k9s
 
       # editors
@@ -390,41 +319,23 @@ in
       #vimPlugins.LazyVim # not really used
       #neovim
 
-      # crypto
-      openssl
-
       # msg
       halloy # remove? weechat?
-      element-desktop
-      rocketchat-desktop
-      threema-desktop
       (wrapPasswordStore signal-desktop "signal-desktop") # forces gnome-libsecret, see vscode wrapper comment above
-      discord
       #slack
       #webex # does not work anyway currently? using browser-based webex for now
 
       # ai
-      opencode
-      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.claude-code
-      inputs.llm-agents-nix.packages.${pkgs.stdenv.hostPlatform.system}.dsh # deepseek-ai agent harness
-      claude-monitor
       lmstudio
       ollama-vulkan
 
       # conf
       #teams-for-linux
-      zoom-us
 
       # productivity
-      kuro
       #super-productivity # flatpak now
 
       # cli
-      fastfetch # remove?
-      jq
-      yq-go
-      fzf
-      nh
       eza
       fd
       ripgrep
@@ -439,19 +350,10 @@ in
 
       # vpn
       tailscale
-      wireguard-tools
-      eduvpn-client
 
       # office
       #libreoffice-fresh # now flathub
       #onlyoffice-desktopeditors
-      pympress
-
-      # sys tools / hw
-      lshw
-      lm_sensors
-      powertop
-      btop
 
       # emu / retro
       fsuae
@@ -460,41 +362,21 @@ in
       #vice # currently breaks build # flatpak now
 
       # network
-      containerlab
       #gns3-gui@2.2.42 # lock gns3-gui to a specific version
-      mininet
       #openvswitch
-      gnmic
-      wireshark
-      tshark
-      iperf3
       ethtool
       iw
-      liboping # noping
-      inetutils
-      curl
-      wget
-      socat
-      dig
 
       # terminal
-      ghostty
       #kitty # remove?
-      tmux
-      tmux-xpanes
       #zellij
       #starship # enabled as program below
       #alacritty
       #wezterm
 
       # pdf
-      kdePackages.okular
       #masterpdfeditor4
       #masterpdfeditor
-
-      # notes
-      xournalpp
-      obsidian
 
       # gfx
       gimp
@@ -502,7 +384,6 @@ in
       pinta
 
       # tex
-      texstudio
       #texliveFull # big package - optimize -> DONE separate flake now
 
       # remote desktop
@@ -510,24 +391,14 @@ in
       remmina
 
       # video
-      obs-studio
-      obs-studio-plugins.obs-backgroundremoval
-      vlc
       yt-dlp
 
       # 3d printing
       #prusa-slicer
 
-      # packer
-      unzip
-      unrar
-
       # sec
       sops
-    ];
-  };
-
-  users.users.root.extraGroups = [ "frrvty" ];
+  ];
 
   home-manager = {
     # caladan runs the whole system on nixos-unstable now; reuse the
@@ -561,46 +432,16 @@ in
   };
 
   fonts.packages = with pkgs; [
-    corefonts
-    noto-fonts
-    #noto-fonts-cjk renamed to:
-    noto-fonts-cjk-sans
-    noto-fonts-color-emoji
-    proggyfonts
-    vista-fonts
-    #nerdfonts # big package - optimze
-    #(nerdfonts.override { fonts = [ "FiraCode" "Iosevka" "IosevkaTerm" "NerdFontsSymbolsOnly" ]; })
-    nerd-fonts.fira-code
-    nerd-fonts.iosevka
-    nerd-fonts.iosevka-term
-    nerd-fonts.symbols-only
     google-fonts # nunito for hs-fulda
     liberation_ttf # dfg
     fira-code # dfg
   ];
 
-  # Enable the Flakes feature and the accompanying new nix command-line tool
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  # e.g., to allow cachix for devenv: https://devenv.cachix.org	
-  # risky/lazy: nix.settings.trusted-users = [ "root" "flex" ];
-  nix.settings.trusted-users = [ "root" "flex" ];
-  # better:
+  # e.g., to allow cachix for devenv: https://devenv.cachix.org
   nix.extraOptions = ''
     extra-substituters = https://devenv.cachix.org https://nixpkgs-python.cachix.org
     extra-trusted-public-keys = devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw= nixpkgs-python.cachix.org-1:hxjI7pFxTyuTHn2NkvWCrAUcNZLNS3ZAvfYNuYifcEU=
   '';
-  # binary cache for llm-agents-nix's source-typed packages (omp, dsh):
-  # avoids compiling their bun/JS dependency graph from scratch.
-  nix.settings = {
-    extra-substituters = [ "https://cache.numtide.com" ];
-    extra-trusted-public-keys = [
-      "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-    ];
-  };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
   # for xfce: really necessary?
   #nixpkgs.config.pulseaudio = true;
   nixpkgs.config.rocmSupport = true;
@@ -731,13 +572,6 @@ in
   # Set the default editor to vim
   environment.variables.EDITOR = "vim";
 
-  # otherwise:
-  # (texstudio:838694): GLib-GIO-ERROR **: 18:46:30.864: Settings schema 'org.gtk.Settings.FileChooser' is not installed zsh: abort (core dumped) texstudio nixos
-  # in texstudio
-  environment.extraInit = ''
-    export XDG_DATA_DIRS="$XDG_DATA_DIRS:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
-  '';
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -822,6 +656,8 @@ in
   #};
 
   # In sudoers via NixOS:
+  # containerlab NOPASSWD rules live in modules/nixos/common.nix; nsenter and
+  # docker NOPASSWD is caladan-only (container debugging).
   security.sudo.extraRules = [{
     users = [ "flex" ];
     commands = [
@@ -833,40 +669,9 @@ in
         command = "${pkgs.docker}/bin/docker";
         options = [ "NOPASSWD" ];
       }
-      {
-        command = "${pkgs.containerlab}/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/etc/profiles/per-user/flex/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/run/current-system/sw/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/home/flex/containerlab/run-clab-sudo.sh";
-        options = [ "NOPASSWD" ];
-      }
     ];
   }];
 
-  programs.zsh.enable = true;
-  #programs.fish.enable = true; not used currently
-  programs.starship = {
-    enable = true;
-    settings = {
-      aws = {
-        disabled = true;
-      };
-    };
-  };
-
-  programs.direnv.enable = true;
-
-  virtualisation.libvirtd.enable = true;
-  virtualisation.vswitch.enable = true;
   programs.virt-manager.enable = true;
 
   # disabled: using virt-manager and kvm by default
@@ -874,9 +679,6 @@ in
   #causes recompilation:
   #virtualisation.virtualbox.host.enableExtensionPack = true;
   #users.extraGroups.vboxusers.members = [ "flex" ];
-
-  virtualisation.docker.enable = true;
-  users.extraGroups.docker.members = [ "flex" ];
 
   virtualisation.spiceUSBRedirection.enable = true;
 
@@ -904,11 +706,8 @@ in
 
   services.fwupd.enable = true;
 
-  services.tailscale.enable = true;
+  # tailscale/openssh enable live in modules/nixos/desktop-common.nix
   #services.tailscale.useRoutingFeatures = "client";
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
 
   services.fprintd.enable = true;
   #services.fprintd.tod.enable = true;
@@ -947,7 +746,6 @@ in
       config.services.tailscale.port # Allow the Tailscale UDP port through the firewall
     ]; 
     #allowedTCPPorts = [ 3389 ]; # gnome remote desktop
-    checkReversePath = "loose"; # allow wireguard VPN host as default gw, allow exit nodes and subnet routers in tailscale
   };
 
   # temporary rules: nixos-firewall-tool, e.g.:

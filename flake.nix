@@ -50,8 +50,6 @@
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
-    #pkgs = nixpkgs.legacyPackages.${system};
-    pkgsUnstable = nixpkgs-unstable.legacyPackages.${system};
 
     # Secrets/host-specific values that must never land in the (public) git
     # repo. Flakes only see git-tracked files, so gitignoring a file in-repo
@@ -68,43 +66,44 @@
       if builtins.pathExists path
       then import path
       else import ./hosts/${host}/private.nix.example;
+
+    # Collects each host's boilerplate nixosSystem call into one place, so
+    # the per-host differences below (which nixpkgs channel, which
+    # home-manager input, which extra modules) are what's visible.
+    mkHost = { hostname, nixpkgsFlake, homeManagerInput, extraSpecialArgs ? {}, extraModules ? [] }:
+      nixpkgsFlake.lib.nixosSystem {
+        inherit system;
+        specialArgs = { inherit inputs; } // extraSpecialArgs;
+        modules = [
+          ./hosts/${hostname}/configuration.nix
+          homeManagerInput.nixosModules.default
+        ] ++ extraModules ++ [
+          (import ./overlays)
+        ];
+      };
   in {
     nixosConfigurations = {
-      caladan = nixpkgs-unstable.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs pkgsUnstable;};
-        modules = [
-          ./hosts/caladan/configuration.nix
-          inputs.home-manager-unstable.nixosModules.default
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          #./modules/nixos/kitty/default.nix
-          #./hosts
-          (import ./overlays)
-          #chaotic.nixosModules.default
-        ];
+      caladan = mkHost {
+        hostname = "caladan";
+        nixpkgsFlake = nixpkgs-unstable;
+        homeManagerInput = inputs.home-manager-unstable;
+        extraModules = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
       };
-      giedi-prime = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs pkgsUnstable; private = privateFor "giedi-prime";};
-        modules = [
-          ./hosts/giedi-prime/configuration.nix
-          inputs.home-manager.nixosModules.default
-          inputs.nix-flatpak.nixosModules.nix-flatpak
-          #./modules/nixos/kitty/default.nix
-          #./hosts
-          (import ./overlays)
-          #chaotic.nixosModules.default
-        ];
+      giedi-prime = mkHost {
+        hostname = "giedi-prime";
+        nixpkgsFlake = nixpkgs;
+        homeManagerInput = inputs.home-manager;
+        extraSpecialArgs = { private = privateFor "giedi-prime"; };
+        extraModules = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
       };
-      cardassia3 = nixpkgs.lib.nixosSystem {
-        inherit system;
-        specialArgs = {inherit inputs pkgsUnstable self; private = privateFor "cardassia3";};
-        modules = [
-          ./hosts/cardassia3/configuration.nix
+      cardassia3 = mkHost {
+        hostname = "cardassia3";
+        nixpkgsFlake = nixpkgs;
+        homeManagerInput = inputs.home-manager;
+        extraSpecialArgs = { private = privateFor "cardassia3"; inherit self; };
+        extraModules = [
           ./hosts/cardassia3/sops.nix
-          inputs.home-manager.nixosModules.default
           inputs.sops-nix.nixosModules.sops
-          (import ./overlays)
         ];
       };
     };

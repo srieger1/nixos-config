@@ -119,6 +119,7 @@
     neovim
     wget
     htop
+    git # needed on PATH for git-upload-pack/git-receive-pack when hosts pull/push /root/git/flexos-private.git over ssh
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
