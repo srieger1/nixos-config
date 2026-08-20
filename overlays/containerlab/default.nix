@@ -4,8 +4,8 @@
         src = prev.fetchFromGitHub {
           inherit (previousAttrs.src) owner repo;
           rev = "v${finalAttrs.version}";
-        ##  #  # to geht hash:
-          hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+          # to get hash:
+          #hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
           ##hash = prev.lib.fakeHash;
           #hash = "sha256-QBv0SZ7XxVc0yWbOxPKdfzk9AKYlMJyeZwpAx1jbamk="; # 0.72.0
           #hash = "sha256-i2DTa5PZOWRgUIhlX3l2mnz+o6yEPkRZY/NrG73pbj4="; # 0.73
@@ -16,8 +16,7 @@
           #hash = "sha256-39rjb9GU37lGvNO45ibNfsbEkuzXuS4X5jyhDWXfMMc="; # 0.77.0
           hash = "sha256-dDIG3Hfx24H9AkzSFgwzPeNeoX89kO2RzW8iNyKyrC0="; # 0.78.2
         };
-        # # to get vendorHash:
-        # #    vendorHash = lib.fakeHash;
+        # to get vendorHash:
         vendorHash = "sha256-BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
         ##vendorHash = prev.lib.fakeHash;
         #vendorHash = "sha256-XttJ/GXhNKVHLR33A/o3N3OYHsyKWHBhD5QOz0AlfFk="; # 0.72.0
