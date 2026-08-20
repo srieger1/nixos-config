@@ -14,6 +14,7 @@
           #hash = "sha256-l04WV3dvi09Gc/ywxTcGW0YY221vf9XelGAZcTaR17o="; # 0.75.0
           #hash = "sha256-ULO0I9ixhRKCHI6LT2lWn2wXEIMl87q3PXwus+b3VmM="; # 0.76.0
           #hash = "sha256-39rjb9GU37lGvNO45ibNfsbEkuzXuS4X5jyhDWXfMMc="; # 0.77.0
+          hash = "sha256-dDIG3Hfx24H9AkzSFgwzPeNeoX89kO2RzW8iNyKyrC0="; # 0.78.2
         };
         # # to get vendorHash:
         # #    vendorHash = lib.fakeHash;
