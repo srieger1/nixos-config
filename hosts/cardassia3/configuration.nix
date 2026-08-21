@@ -134,6 +134,7 @@
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;
+  services.tailscale.enable = true;
 
   # http://<static-ip>:8082
   services.homepage-dashboard = {
