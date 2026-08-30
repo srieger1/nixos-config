@@ -15,6 +15,7 @@
     ../../modules/home-manager/nextcloud-client.nix
     ../../modules/home-manager/omp
     ../../modules/home-manager/ssh
+    ../../modules/home-manager/herdr
   ];
 
   #programs.git.enable = true;
