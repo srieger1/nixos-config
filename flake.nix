@@ -108,7 +108,11 @@
         nixpkgsFlake = nixpkgs;
         homeManagerInput = inputs.home-manager;
         extraSpecialArgs = { private = privateFor "giedi-prime"; };
-        extraModules = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
+        extraModules = [
+          inputs.nix-flatpak.nixosModules.nix-flatpak
+          inputs.openlogi.nixosModules.default
+          inputs.containerlab.nixosModules.default
+        ];
       };
       cardassia3 = mkHost {
         hostname = "cardassia3";

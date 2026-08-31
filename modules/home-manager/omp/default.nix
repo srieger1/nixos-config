@@ -11,7 +11,8 @@ let
       #tiny = "anthropic/claude-haiku-4-5:medium";
       #smol = "anthropic/claude-haiku-4-5:medium";
       default = "openrouter/z-ai/glm-5.3-flash:high";
-      advisor = "openrouter/z-ai/glm-5.2:free:high";
+      #advisor = "openrouter/z-ai/glm-5.2:free:high";
+      advisor = "openrouter/z-ai/glm-5.3-flash:high";
       tiny = "openrouter/nvidia/nemotron-3.5-lightning:free:high";
       smol = "openrouter/google/gemma-4-26b-a4b-it:free:high";
     };
