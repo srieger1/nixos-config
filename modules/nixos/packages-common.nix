@@ -56,7 +56,6 @@
     socat
     terraform
     texstudio
-    threema-desktop
     thunderbird
     tmux
     tmux-xpanes

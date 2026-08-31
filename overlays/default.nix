@@ -76,7 +76,7 @@
     # not needed anymore:
     #(import ./xdg-fix)
 
-    (import ./containerlab)
+    #(import ./containerlab)
     #(import ./ms-python)
     #(import ./pympress)
     #(import ./ghostty)

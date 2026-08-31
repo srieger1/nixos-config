@@ -30,6 +30,8 @@
     extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "clab_admins" ];
   };
 
+  programs.containerlab.enable = true;
+
   # containerlab needs elevated netns/capabilities; NOPASSWD sudo avoids a
   # password prompt on every lab deploy, across every path containerlab's
   # binary might resolve to (nix profile symlink vs. system profile vs. PATH).

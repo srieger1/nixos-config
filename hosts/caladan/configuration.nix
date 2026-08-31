@@ -524,6 +524,7 @@ in
   hardware.logitech.wireless.enable = true;
   #hardware.logitech.wireless.enableGraphical = true; # deprecated, use programs.solaar.enable
   programs.solaar.enable = true;
+  programs.openlogi.enable = true;
 
   # hosts file allow write for containerlab
   environment.etc.hosts.enable = false;
@@ -709,7 +710,7 @@ in
   # tailscale/openssh enable live in modules/nixos/desktop-common.nix
   #services.tailscale.useRoutingFeatures = "client";
 
-  services.fprintd.enable = true;
+  #services.fprintd.enable = true;
   #services.fprintd.tod.enable = true;
 
   # Open ports in the firewall.

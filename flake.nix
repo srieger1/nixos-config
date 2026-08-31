@@ -31,6 +31,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    openlogi = {
+      url = "github:AprilNEA/OpenLogi";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    containerlab = {
+      url = "github:srl-labs/containerlab";
+      #inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     #chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # cachyos kernel etc. # dead
 
     #hyprland.url = "github:hyprwm/Hyprland";
@@ -87,7 +97,11 @@
         hostname = "caladan";
         nixpkgsFlake = nixpkgs-unstable;
         homeManagerInput = inputs.home-manager-unstable;
-        extraModules = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
+        extraModules = [
+          inputs.nix-flatpak.nixosModules.nix-flatpak
+          inputs.openlogi.nixosModules.default
+          inputs.containerlab.nixosModules.default
+        ];
       };
       giedi-prime = mkHost {
         hostname = "giedi-prime";
