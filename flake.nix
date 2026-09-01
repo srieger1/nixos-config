@@ -31,10 +31,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    openlogi = {
-      url = "github:AprilNEA/OpenLogi";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # No `inputs.nixpkgs.follows` here (same rationale as llm-agents-nix above):
+    # openlogi is a Rust/GPUI app with no public binary cache, so every nixpkgs
+    # bump on our side was forcing a ~13min from-source rebuild via the shared
+    # input. Letting it pin its own nixpkgs decouples rebuilds from our routine
+    # `update.sh` runs, at the cost of a second nixpkgs closure.
+    openlogi.url = "github:AprilNEA/OpenLogi";
 
     containerlab = {
       url = "github:srl-labs/containerlab";
