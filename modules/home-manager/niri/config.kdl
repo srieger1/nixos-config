@@ -70,8 +70,8 @@ layout {
 }
 
 // noctalia-shell handles the bar, launcher, control center, notifications,
-// lock screen and wallpaper; niri only needs to spawn it once at startup.
-spawn-at-startup "noctalia-shell"
+// lock screen and wallpaper; started as a systemd --user service
+// (modules/home-manager/niri/default.nix), not spawned by niri directly.
 
 // nm-applet: noctalia doesn't register as a NetworkManager secret agent, so
 // 802-1x networks (eduroam) whose secrets are agent-owned (not stored on
