@@ -17,6 +17,7 @@
     devenv
     dig
     discord
+    dool # dstat replacement
     eduvpn-client
     element-desktop
     fastfetch

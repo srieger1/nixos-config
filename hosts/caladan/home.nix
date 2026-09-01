@@ -3,11 +3,7 @@
 {
   imports = [
     ../../modules/home-manager/base.nix
-    #../../modules/home-manager/kitty
     ../../modules/home-manager/zsh
-    #../../modules/home-manager/nvim
-    #../../modules/home-manager/neofetch
-    #../../modules/home-manager/tmux
     ../../modules/home-manager/tex
     #../../modules/home-manager/gtk
     ../../modules/home-manager/gnome
@@ -38,40 +34,5 @@
   #    user = "root";
   #    proxyJump = "cardassia";
   #  };
-  #  "minecraft1" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #    proxyJump = "cardassia";
-  #  };
-  #  "udm-pro" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "pve1" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "pve2" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "pve3" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "pvenet1" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "mister" = {
-  #    hostname = "192.168.x.x";
-  #    user = "root";
-  #  };
-  #  "charm-os-deploy" = {
-  #    hostname = "x.x.x.x";
-  #    user = "cloud";
-  #    dynamicForward = 1080;
-  #  };
-  #
   #};
 }

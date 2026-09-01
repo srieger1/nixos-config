@@ -27,7 +27,6 @@ in
       ../../modules/nixos/common.nix
       ../../modules/nixos/desktop-common.nix
       ../../modules/nixos/packages-common.nix
-      ../../modules/nixos/test.nix
       ../../modules/nixos/thunderbolt.nix
       #../../modules/nixos/cosmic.nix
     ];
