@@ -11,7 +11,7 @@
     #../../modules/home-manager/nextcloud-client.nix
     ../../modules/home-manager/omp
     ../../modules/home-manager/ssh
-    ../../modules/home-manager/herdr
+    #../../modules/home-manager/herdr # not in nixos stable as of 26.05
     ../../modules/home-manager/nvim
   ];
 }
