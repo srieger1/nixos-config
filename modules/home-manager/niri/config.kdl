@@ -265,8 +265,11 @@ binds {
     Mod+Ctrl+8 { move-column-to-workspace 8; }
     Mod+Ctrl+9 { move-column-to-workspace 9; }
 
-    Mod+BracketLeft  { consume-or-expel-window-left; }
-    Mod+BracketRight { consume-or-expel-window-right; }
+    // Mod+BracketLeft/Right (niri defaults) are dead on the German layout: [ and ]
+    // only exist as AltGr+8/9 there, and niri matches binds on the key's unshifted
+    // keysym with an exact modifier set (AltGr = Mod5).
+    Mod+Mod5+8 { consume-or-expel-window-left; }
+    Mod+Mod5+9 { consume-or-expel-window-right; }
 
     Mod+Comma  { consume-window-into-column; }
     Mod+Period { expel-window-from-column; }
@@ -287,11 +290,14 @@ binds {
     Mod+C { center-column; }
     Mod+Ctrl+C { center-visible-columns; }
 
+    // German layout: "+" is an unshifted key (keysym plus, on the key a US
+    // layout calls "]"); niri's default Mod+Equal can never fire on de,
+    // because there `equal` is only reachable as Shift+0.
     Mod+Minus { set-column-width "-10%"; }
-    Mod+Equal { set-column-width "+10%"; }
+    Mod+Plus  { set-column-width "+10%"; }
 
     Mod+Shift+Minus { set-window-height "-10%"; }
-    Mod+Shift+Equal { set-window-height "+10%"; }
+    Mod+Shift+Plus  { set-window-height "+10%"; }
 
     Mod+V       { toggle-window-floating; }
     Mod+Shift+V { switch-focus-between-floating-and-tiling; }
