@@ -49,6 +49,38 @@
 
   services.xserver.videoDrivers = [ "displaylink" "modesetting" ];
 
+  # XHCI (pci:0000:00:14.0) fires a spurious wakeup during s2idle suspend
+  # entry: the Lenovo fingerprint reader (06cb:00f9, usb 3-3) drops off the
+  # bus when the system starts sleeping, and the resulting xHCI port event
+  # wakes the machine ~3s after `PM: suspend entry` (verified 2026-09-10 by
+  # toggling `/sys/bus/pci/devices/0000:00:14.0/power/wakeup` and watching
+  # `usb 3-3: USB disconnect` + immediate `PM: suspend exit` in the journal).
+  # Disabling XHCI ACPI wakeup lets the system sleep for hours (tested:
+  # 4m24s / 3m35s stable sleeps vs. 3s wake-loops before). Built-in
+  # keyboard (i8042/IRQ1), lid and power button still wake the system.
+  # Same pattern as hosts/caladan/configuration.nix (ath11k/XHC0 fix):
+  # the udev rule sets the baseline at device-add time, but xhci_pci's
+  # probe() can re-enable wakeup afterwards, so also force it off right
+  # before every suspend.
+  services.udev.extraRules = ''
+    SUBSYSTEM=="pci", KERNEL=="0000:00:14.0", ATTR{power/wakeup}="disabled"
+  '';
+
+  systemd.services.xhci-wakeup-disable = {
+    enable = true;
+    description = "Suspend: force-disable XHCI ACPI wakeup";
+    unitConfig = {
+      Before = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+    };
+    serviceConfig = {
+      Type = "oneshot";
+    };
+    script = ''
+      echo disabled > /sys/bus/pci/devices/0000:00:14.0/power/wakeup
+    '';
+    wantedBy = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
+  };
+
   # Configure keymap in X11 (layout set in modules/nixos/desktop-common.nix)
   services.xserver.xkb.variant = "nodeadkeys";
 
