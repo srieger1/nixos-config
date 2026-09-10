@@ -72,6 +72,7 @@ let
   '';
   ompGpu4Bin = pkgs.writeShellScriptBin "omp-gpu4" ''
     export OLLAMA_HOST=http://gpu4:11434
+    export OLLAMA_CONTEXT_LENGTH=131072
     exec omp --config ${ompGpu4} "$@"
   '';
   ompLocalAiBin = pkgs.writeShellScriptBin "omp-local-ai" ''

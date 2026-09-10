@@ -148,6 +148,7 @@ binds {
 
     // Terminal + noctalia core binds (launcher, control center, settings).
     Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+    Mod+B hotkey-overlay-title="Open a Browser: firefox" { spawn "firefox"; }
     Mod+Space hotkey-overlay-title="Toggle Launcher: noctalia" { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
     Mod+S hotkey-overlay-title="Toggle Control Center: noctalia" { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
     // niri's own Mod+Comma is taken by consume-window-into-column below,

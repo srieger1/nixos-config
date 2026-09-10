@@ -5,6 +5,7 @@
 { pkgs, inputs, ... }:
 {
   users.users.flex.packages = with pkgs; [
+    alacritty
     awscli2
     bazaar
     brightnessctl
