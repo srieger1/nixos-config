@@ -5,8 +5,8 @@
     settings = {
       global = {
         "workgroup" = "FLEXNET";
-        "server string" = "cardassia3";
-        "netbios name" = "cardassia3";
+        "server string" = "cardassia";
+        "netbios name" = "cardassia";
         "security" = "user";
         #"use sendfile" = "yes";
         #"max protocol" = "smb2";

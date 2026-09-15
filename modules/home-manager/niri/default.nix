@@ -15,14 +15,13 @@
         cp ${./config.kdl} $out
       '';
 
-  # noctalia-shell as a systemd user service instead of niri's
+  # noctalia (v5, native) as a systemd user service instead of niri's
   # spawn-at-startup: survives crashes (Restart=on-failure) and gets
-  # restarted on nixos-rebuild switch, avoiding the stale-store-path
-  # mismatch where the running quickshell keeps the old hash while the
-  # IPC client (keyed on shell.qml path) can no longer find it.
-  systemd.user.services.noctalia-shell = {
+  # restarted on nixos-rebuild switch, so the running shell and the
+  # `noctalia msg ...` IPC client always come from the same build.
+  systemd.user.services.noctalia = {
     Unit = {
-      Description = "Noctalia shell (quickshell)";
+      Description = "Noctalia desktop shell";
       After = [ "graphical-session.target" ];
       PartOf = [ "graphical-session.target" ];
       ConditionEnvironment = "WAYLAND_DISPLAY";
@@ -31,7 +30,7 @@
       WantedBy = [ "graphical-session.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.noctalia-shell}/bin/noctalia-shell";
+      ExecStart = "${pkgs.noctalia}/bin/noctalia";
       Restart = "on-failure";
       RestartSec = 2;
     };

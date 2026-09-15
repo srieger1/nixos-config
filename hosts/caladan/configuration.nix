@@ -181,7 +181,7 @@ in
   # niri: scrollable-tiling Wayland compositor, offered as an alternative
   # session to GNOME from the same GDM login screen (no DM change needed —
   # GDM already lists every registered Wayland session). Paired with
-  # noctalia-shell (see modules/home-manager/niri) for bar/launcher/lock.
+  # noctalia v5 (see modules/home-manager/niri) for bar/launcher/lock.
   # https://wiki.nixos.org/wiki/Niri
   programs.niri.enable = true;
   # Explicit here since niri's setup guide calls it out directly; GNOME's
@@ -601,10 +601,8 @@ in
     #libappindicator-gtk3
     #kdePackages.breeze-gtk
     # niri session (see programs.niri.enable above)
-    noctalia-shell # bar/launcher/control-center/lock-screen, spawned from niri config.kdl
-    networkmanagerapplet # nm-applet: NM secret agent under niri, backed by gnome-keyring
-    # (no built-in secret agent of its own reliably persists 802-1x secrets; see
-    # modules/home-manager/niri/config.kdl for the spawn-at-startup entry)
+    noctalia # v5 native shell: bar/launcher/control-center/lock-screen, run by the
+    # systemd --user service in modules/home-manager/niri/default.nix
     xwayland-satellite # XWayland app support under niri, https://wiki.nixos.org/wiki/Niri#XWayland_apps_not_working
   ];
 

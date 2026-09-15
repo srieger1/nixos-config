@@ -68,7 +68,7 @@
     # isn't enough — it silently falls back to the checked-in .example.
     # The real file lives at an absolute path outside the repo, keyed off
     # $HOME so it resolves correctly whichever user builds the flake (flex
-    # on caladan/giedi-prime/cardassia3). Reading it needs `--impure` too,
+    # on caladan/giedi-prime/cardassia). Reading it needs `--impure` too,
     # since pure eval also refuses external absolute paths (already set in
     # update.sh / rebuild-switch.sh).
     privateFor = host:
@@ -116,16 +116,30 @@
           inputs.containerlab.nixosModules.default
         ];
       };
-      cardassia3 = mkHost {
-        hostname = "cardassia3";
+      cardassia = mkHost {
+        hostname = "cardassia";
         nixpkgsFlake = nixpkgs;
         homeManagerInput = inputs.home-manager;
-        extraSpecialArgs = { private = privateFor "cardassia3"; inherit self; };
+        extraSpecialArgs = { private = privateFor "cardassia"; inherit self; };
         extraModules = [
-          ./hosts/cardassia3/sops.nix
+          ./hosts/cardassia/sops.nix
           inputs.sops-nix.nixosModules.sops
         ];
       };
+      # Headless Proxmox VM running the Pumpkin Minecraft server. Unstable
+      # because services.pumpkin + the pumpkin package only exist there.
+      # Its eval also builds the importable Proxmox image — see the
+      # packages output below and hosts/rura-penthe/configuration.nix.
+      rura-penthe = mkHost {
+        hostname = "rura-penthe";
+        nixpkgsFlake = nixpkgs-unstable;
+        homeManagerInput = inputs.home-manager-unstable;
+      };
     };
+    # Proxmox VMA backup archive (vzdump-qemu-rura-penthe.vma.zst) built from
+    # rura-penthe's own eval, importable with `qmrestore`. Same NixOS config as
+    # nixosConfigurations.rura-penthe, so image and deployed system never drift.
+    packages.${system}.rura-penthe-proxmox-image =
+      self.nixosConfigurations.rura-penthe.config.system.build.image;
   };
 }

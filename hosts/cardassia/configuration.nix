@@ -39,7 +39,7 @@
   # not working:
   #localDnsResolver = false;
 
-  networking.hostName = "cardassia3"; # Define your hostname.
+  networking.hostName = "cardassia"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary

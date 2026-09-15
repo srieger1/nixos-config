@@ -1,5 +1,5 @@
 # Settings shared by every desktop host (caladan, giedi-prime). Not imported
-# by cardassia3 (headless server, stable channel, different user/services
+# by cardassia (headless server, stable channel, different user/services
 # entirely) — see modules/nixos/desktop-common.nix for the desktop-only half
 # of this split.
 { pkgs, ... }:

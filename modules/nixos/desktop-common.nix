@@ -1,6 +1,6 @@
 # Desktop-specific half of the caladan/giedi-prime shared config (GNOME,
 # audio, virtualisation, networking). See modules/nixos/common.nix for the
-# non-desktop-specific half. Not imported by cardassia3.
+# non-desktop-specific half. Not imported by cardassia.
 { ... }:
 {
   services.xserver.enable = true;

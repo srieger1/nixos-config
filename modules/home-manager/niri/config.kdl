@@ -1,10 +1,9 @@
-// niri config for caladan, paired with noctalia-shell (v4/Quickshell line) as the
+// niri config for caladan, paired with noctalia (v5 native line) as the
 // bar/launcher/notifications/lock-screen/wallpaper shell. Based on niri's
 // resources/default-config.kdl, trimmed of waybar/fuzzel/alacritty/swaylock
 // defaults (not installed) and adjusted per:
 // https://wiki.nixos.org/wiki/Niri
-// https://docs.noctalia.dev/v4/getting-started/compositor-settings/niri/
-// https://docs.noctalia.dev/v4/getting-started/keybinds/keybinds/
+// https://docs.noctalia.dev/noctalia/compositor-settings/niri/
 
 input {
     keyboard {
@@ -36,6 +35,10 @@ input {
 }
 
 layout {
+    // Transparent workspace background so noctalia's stationary wallpaper
+    // (noctalia-wallpaper layer in the backdrop) stays visible.
+    background-color "transparent"
+
     gaps 16
 
     center-focused-column "never"
@@ -69,18 +72,9 @@ layout {
     }
 }
 
-// noctalia-shell handles the bar, launcher, control center, notifications,
+// noctalia handles the bar, launcher, control center, notifications,
 // lock screen and wallpaper; started as a systemd --user service
 // (modules/home-manager/niri/default.nix), not spawned by niri directly.
-
-// nm-applet: noctalia doesn't register as a NetworkManager secret agent, so
-// 802-1x networks (eduroam) whose secrets are agent-owned (not stored on
-// disk) can't be supplied on reconnect without one running. nm-applet fills
-// that role and persists secrets via gnome-keyring (already running/reachable
-// here, see wrapPasswordStore comment in hosts/caladan/configuration.nix).
-// --indicator only affects the (optional) tray icon noctalia's tray widget
-// can host; the secret-agent registration works headless either way.
-spawn-at-startup "nm-applet" "--indicator"
 
 hotkey-overlay {
 }
@@ -105,7 +99,7 @@ window-rule {
 }
 
 // noctalia: rounded corners + blur behind windows.
-// https://docs.noctalia.dev/v4/getting-started/compositor-settings/niri/
+// https://docs.noctalia.dev/noctalia/compositor-settings/niri/
 window-rule {
     geometry-corner-radius 20
     clip-to-geometry true
@@ -116,24 +110,32 @@ window-rule {
     }
 }
 
+// noctalia: floating settings window with the docs' recommended size.
+window-rule {
+    match app-id="dev.noctalia.Noctalia"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+
 // noctalia: allows notification actions and window activation from the shell.
 debug {
     honor-xdg-activation-with-invalid-serial
 }
 
-// noctalia: blur its own bar/panels/launcher/dock too.
+// noctalia: disable xray on its own surfaces (blur regions are published
+// automatically when ext-background-effects is available).
 layer-rule {
-    match namespace="^noctalia-(background|launcher-overlay|dock)-.*$"
+    match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
     background-effect {
         xray false
     }
 }
 
 // noctalia: stationary wallpaper (visible at all times, doesn't scroll with
-// workspaces). Requires "Enable overview wallpaper" OFF in noctalia's
-// Wallpaper settings tab (the default).
+// workspaces). Transparent workspace background keeps the backdrop visible.
 layer-rule {
-    match namespace="^noctalia-wallpaper*"
+    match namespace="^noctalia-wallpaper"
     place-within-backdrop true
 }
 
@@ -149,19 +151,19 @@ binds {
     // Terminal + noctalia core binds (launcher, control center, settings).
     Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
     Mod+B hotkey-overlay-title="Open a Browser: firefox" { spawn "firefox"; }
-    Mod+Space hotkey-overlay-title="Toggle Launcher: noctalia" { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+S hotkey-overlay-title="Toggle Control Center: noctalia" { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+    Mod+Space hotkey-overlay-title="Toggle Launcher: noctalia" { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+    Mod+S hotkey-overlay-title="Toggle Control Center: noctalia" { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
     // niri's own Mod+Comma is taken by consume-window-into-column below,
     // so settings gets Mod+Shift+Comma instead of noctalia's suggested default.
-    Mod+Shift+Comma hotkey-overlay-title="Toggle Settings: noctalia" { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
+    Mod+Shift+Comma hotkey-overlay-title="Toggle Settings: noctalia" { spawn "noctalia" "msg" "settings-toggle"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia" "msg" "session" "lock"; }
 
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
 
     // Volume/brightness routed through noctalia so its OSD shows the change.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
-    XF86AudioMute        allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-up"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "noctalia" "msg" "volume-down"; }
+    XF86AudioMute        allow-when-locked=true { spawn "noctalia" "msg" "volume-mute"; }
     XF86AudioMicMute     allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
 
     XF86AudioPlay        allow-when-locked=true { spawn-sh "playerctl play-pause"; }
@@ -170,8 +172,8 @@ binds {
     XF86AudioPrev        allow-when-locked=true { spawn-sh "playerctl previous"; }
     XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
 
-    XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
 
     Mod+O repeat=false { toggle-overview; }
 

@@ -1,9 +1,9 @@
 # Nix flakes only see git-tracked files inside the repo, so a gitignored
-# hosts/cardassia3/private.nix would silently be invisible to `nix build`
+# hosts/cardassia/private.nix would silently be invisible to `nix build`
 # and always fall back to this example. Instead:
 #   mkdir -p ~/.config/flexos-private
-#   cp hosts/cardassia3/private.nix.example ~/.config/flexos-private/cardassia3.nix
-#   $EDITOR ~/.config/flexos-private/cardassia3.nix   # fill in real values
+#   cp hosts/cardassia/private.nix.example ~/.config/flexos-private/cardassia.nix
+#   $EDITOR ~/.config/flexos-private/cardassia.nix   # fill in real values
 # That path lives outside the repo, so it's never touched by git at all —
 # but reading an absolute path outside the flake's source also requires
 # `--impure` on the build (update.sh / rebuild-switch.sh already pass it;

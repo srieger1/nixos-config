@@ -30,7 +30,7 @@
   #    port = 25222;
   #    user = "flex";
   #  };
-  #  "cardassia3" = {
+  #  "cardassia" = {
   #    hostname = "192.168.x.x";
   #    user = "root";
   #    proxyJump = "cardassia";
