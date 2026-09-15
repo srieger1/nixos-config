@@ -47,7 +47,30 @@ Deployed remotely from caladan — no login needed:
 nixos-rebuild switch --flake ~/flexos#rura-penthe --target-host root@192.168.78.224
 ```
 
-Root is authorized via caladan's SSH key; the IP is pinned by a router DHCP lease. First-time provisioning built the VM from the same eval: `nix build .#rura-penthe-proxmox-image` → import the resulting `vzdump-qemu-rura-penthe.vma.zst` with `qmrestore` on the Proxmox host.
+Root is authorized via caladan's SSH key; the IP is pinned by a router DHCP lease.
+
+#### Proxmox image build
+
+The VM was first provisioned from an image built by the *same* flake eval that
+also serves the running system — image and deployed config can never drift.
+Build and import it like this:
+
+```bash
+nix build .#rura-penthe-proxmox-image
+scp result/vzdump-qemu-rura-penthe.vma.zst root@<pve-host>:/tmp/
+# on the Proxmox host:
+qmrestore /tmp/vzdump-qemu-rura-penthe.vma.zst <VMID> --storage local-lvm
+```
+
+The pattern scales to further Proxmox hosts: import the upstream
+`nixos/modules/virtualisation/proxmox-image.nix` in the host's
+`configuration.nix` (see `hosts/rura-penthe/configuration.nix`) and add a
+`packages.<system>.<host>-proxmox-image = self.nixosConfigurations.<host>.config.system.build.image`
+output in `flake.nix`. Rebuilds of an existing VM need no image — just the
+`--target-host` deploy above.
+Hosts whose values come from `~/.config/flexos-private` (currently
+`giedi-prime`, `cardassia`) need `--impure` on the image build:
+`nix build --impure .#<host>-proxmox-image`.
 
 ## Private values (outside the repo)
 
@@ -70,6 +93,37 @@ git clone cardassia:git/flexos-private.git ~/.config/flexos-private-sync
 ```
 
 Edit values by committing in those repos — a change to `flexos-private-sync` lands on a host after the next `git pull` there (both scripts pull before rebuilding).
+
+## devenv environments & store cleanup
+
+devenv registers each project's current environment as a GC root
+(`/nix/var/nix/gcroots/auto` → the project's `.devenv/gc/*` symlinks), so the
+daily `nh clean` collects everything **except** the latest environment of
+every devenv project. Old versions (including tried-out packages) vanish
+automatically once you re-enter the project after changing `devenv.nix`.
+
+```bash
+# Find all devenv projects (no depth cap — some live deep in Nextcloud):
+find ~ -name devenv.nix -not -path '*/.cache/*' 2>/dev/null
+
+# See which projects currently pin store paths (the registered roots):
+ls -l /nix/var/nix/gcroots/auto | grep .devenv
+
+# Update a project's devenv.lock and rebuild:
+cd <project> && devenv update && devenv shell
+
+# Prune old generations of a project's environment:
+cd <project> && devenv gc
+
+# Retire an abandoned project — releases its environment to the next
+# `nh clean` run (the stale entry in gcroots/auto is harmless):
+rm -rf <project>/.devenv
+```
+
+Note: the central `~/.local/share/devenv/gc/` directory is devenv-internal
+bookkeeping, *not* GC roots — do not bother pruning it. Store paths freed by
+deleting roots are collected by the next `nh clean` (daily 06:00).
+
 
 ## Sanity check
 
