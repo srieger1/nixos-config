@@ -17,7 +17,9 @@ let
       #smol = "anthropic/claude-haiku-4-5:medium";
       default = "openrouter/z-ai/glm-5.3-flash:high";
       #advisor = "openrouter/z-ai/glm-5.2:free:high";
-      advisor = "openrouter/z-ai/glm-5.3-flash:high";
+      ## advisor without :high — Review-Turns fire for every Primary change
+      ## Deep-Thinking 5x cost/lag without quality improvement (triaged 9/2026)
+      advisor = "openrouter/z-ai/glm-5.3-flash";
       tiny = "openrouter/nvidia/nemotron-3.5-lightning:free:high";
       smol = "openrouter/google/gemma-4-26b-a4b-it:free:high";
     };
@@ -63,6 +65,14 @@ let
     advisor.enabled = false;
     autolearn.enabled = false;
   };
+  ompFlexnetAi = (pkgs.formats.yaml { }).generate "omp-flexnet-ai.yml" {
+    modelRoles = {
+      #default = "lm-studio/qwen/qwen3-30b-a3b-2507";
+      default = "lm-studio/unsloth/qwen3.8-27b";
+    };
+    advisor.enabled = false;
+    autolearn.enabled = false;
+  };
 
   # Launcher wrappers: exec plain `omp` with the extra overlay plus the
   # provider endpoint env vars (OLLAMA_HOST / LM_STUDIO_BASE_URL are how
@@ -79,6 +89,10 @@ let
     export LM_STUDIO_BASE_URL=http://localhost:1234/v1
     exec omp --config ${ompLocalAi} "$@"
   '';
+  ompFlexnetAiBin = pkgs.writeShellScriptBin "omp-flexnet-ai" ''
+    export LM_STUDIO_BASE_URL=http://deep-thought:1234/v1
+    exec omp --config ${ompFlexnetAi} "$@"
+  '';
 
   ompConfigPath = "${config.home.homeDirectory}/.omp/agent/nix-config.yml";
 in
@@ -88,6 +102,7 @@ in
     ompClaudeBin
     ompGpu4Bin
     ompLocalAiBin
+    ompFlexnetAiBin
   ];
 
   home.file.".omp/agent/nix-config.yml".source = ompConfig;

@@ -116,6 +116,19 @@
     ];
   };
 
+  # Pumpkin 0.1.0 loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
+  # while the NixOS module installs whitelist.json into the state dir root —
+  # without this link the server starts with an EMPTY whitelist and rejects
+  # every whitelisted account. Relative symlink: in-game /whitelist add writes
+  # through it into the module-managed file, so both stay one source of truth.
+  systemd.services.pumpkin.preStart = ''
+    ln -sfn ../whitelist.json /var/lib/pumpkin/data/whitelist.json
+  '';
+
+  # TEMPORARY: debug logging while the client-side "joined then immediately
+  # left" (network error) issue is root-caused. Remove once fixed.
+  systemd.services.pumpkin.environment.RUST_LOG = "debug";
+
   # The module defaults to DynamicUser, which changes the service UID per
   # start and leaves root-owned imported files unwritable. Pin a static
   # system user instead so /var/lib/pumpkin/world ownership is stable.

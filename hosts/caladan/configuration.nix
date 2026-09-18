@@ -561,6 +561,17 @@ in
       "org.freedesktop.Bustle"
     ];
     update.onActivation = true;
+    # Flatpak sandboxes get an allow-listed session bus; mindwtr (Tauri) hits
+    # org.freedesktop.secrets to store its WebDAV password but the app's
+    # finish-args don't request it, so the keyring reads as "unavailable" and
+    # it falls back to plaintext secrets.toml. The wrapPasswordStore fix above
+    # can't help here — sandboxes don't exec the wrapped host binaries.
+    # Note: merged with (not replacing) any manually applied overrides.
+    overrides = {
+      "tech.dongdongbh.mindwtr" = {
+        "Session Bus Policy" = { "org.freedesktop.secrets" = "talk"; };
+      };
+    };
   };
   
   # not needed anymore?, for vscode:

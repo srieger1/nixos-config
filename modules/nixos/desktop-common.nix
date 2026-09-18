@@ -19,6 +19,7 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+  programs.librepods.enable = true;
 
   virtualisation.libvirtd.enable = true;
   virtualisation.vswitch.enable = true;

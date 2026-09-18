@@ -19,15 +19,22 @@
 
   console.keyMap = "de-latin1-nodeadkeys";
 
-  users.groups.frrvty = {};
-  users.groups.clab_admins = {};
+  users.groups.frrvty = { };
+  users.groups.clab_admins = { };
   users.users.root.extraGroups = [ "frrvty" ];
 
   users.users.flex = {
     isNormalUser = true;
     description = "flex";
     shell = pkgs.zsh;
-    extraGroups = [ "networkmanager" "wheel" "libvirtd" "docker" "clab_admins" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "libvirtd"
+      "docker"
+      "clab_admins"
+      "librepods"
+    ];
   };
 
   programs.containerlab.enable = true;
@@ -35,27 +42,29 @@
   # containerlab needs elevated netns/capabilities; NOPASSWD sudo avoids a
   # password prompt on every lab deploy, across every path containerlab's
   # binary might resolve to (nix profile symlink vs. system profile vs. PATH).
-  security.sudo.extraRules = [{
-    users = [ "flex" ];
-    commands = [
-      {
-        command = "${pkgs.containerlab}/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/etc/profiles/per-user/flex/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/run/current-system/sw/bin/containerlab";
-        options = [ "NOPASSWD" ];
-      }
-      {
-        command = "/home/flex/containerlab/run-clab-sudo.sh";
-        options = [ "NOPASSWD" ];
-      }
-    ];
-  }];
+  security.sudo.extraRules = [
+    {
+      users = [ "flex" ];
+      commands = [
+        {
+          command = "${pkgs.containerlab}/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/etc/profiles/per-user/flex/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/run/current-system/sw/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/home/flex/containerlab/run-clab-sudo.sh";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
 
   # otherwise:
   # (texstudio:838694): GLib-GIO-ERROR **: 18:46:30.864: Settings schema 'org.gtk.Settings.FileChooser' is not installed zsh: abort (core dumped) texstudio nixos
@@ -71,8 +80,14 @@
   };
   programs.direnv.enable = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
-  nix.settings.trusted-users = [ "root" "flex" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+  nix.settings.trusted-users = [
+    "root"
+    "flex"
+  ];
   # binary cache for llm-agents-nix's source-typed packages (claude-code, dsh):
   # avoids compiling their bun/JS dependency graph from scratch.
   nix.settings.extra-substituters = [ "https://cache.numtide.com" ];
