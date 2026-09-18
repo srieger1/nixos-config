@@ -42,7 +42,10 @@ nh os info
 
 echo "===== UPDATE ===== $DATE" >>$LOG
 #nh os switch -u $FLAKE --ask | tee -a $LOG
-nh os boot $UPDATE_FLAG --impure $FLAKE --ask | tee -a $LOG
+if ! nh os boot $UPDATE_FLAG --impure $FLAKE --ask | tee -a $LOG; then
+  echo "nh os boot failed — skipping commit of flake.lock and push" >&2
+  exit 1
+fi
 #nh clean all --optimise --max --keep-since 14d -k 7 
 #nh clean all --keep-since 14d -k 10 
 

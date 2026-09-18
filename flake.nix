@@ -38,8 +38,12 @@
     # `update.sh` runs, at the cost of a second nixpkgs closure.
     openlogi.url = "github:AprilNEA/OpenLogi";
 
+    # Pinned to the last rev whose flake builds: at d1d767e (2026-09-10) srl-labs
+    # updated their committed flake.lock (new nixos-unstable/Go) without bumping
+    # vendorHash, breaking containerlab-0.79.0-go-modules for all consumers
+    # (hash mismatch mC2E… vs Na2s9G…). Unpin once upstream fixes it.
     containerlab = {
-      url = "github:srl-labs/containerlab";
+      url = "github:srl-labs/containerlab/7c7fa1232635bad30d2c9474726afcc06bf74d2e";
       #inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
