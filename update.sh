@@ -26,13 +26,13 @@ UPDATE_FLAG=""
 [ "$HOSTNAME" = "caladan" ] && UPDATE_FLAG="-u"
 
 #cd ~
-pushd $FLAKE && git pull --rebase && (git commit -a -m "update - $HOSTNAME" || true) && popd
+pushd $FLAKE && git pull --rebase --autostash && (git commit -a -m "update - $HOSTNAME" || true) && popd
 
 # Pull the private ssh-config sync repo (modules/home-manager/ssh reads it
 # at build time). Not fatal if it isn't cloned yet on this host — see
 # modules/home-manager/ssh/default.nix for the bootstrap command.
 PRIVATE_SYNC="$HOME/.config/flexos-private-sync"
-[ -d "$PRIVATE_SYNC/.git" ] && (cd "$PRIVATE_SYNC" && git pull --rebase)
+[ -d "$PRIVATE_SYNC/.git" ] && (cd "$PRIVATE_SYNC" && git pull --rebase --autostash)
 #~/flexos/rebuild-switch.sh
 #sudo nixos-rebuild switch --flake ~/flexos#$HOSTNAME
 nh os info
