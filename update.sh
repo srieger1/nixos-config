@@ -25,8 +25,11 @@ DATE=$(date)
 UPDATE_FLAG=""
 [ "$HOSTNAME" = "caladan" ] && UPDATE_FLAG="-u"
 
+read -r -e -p "Commit message [update - $HOSTNAME]: " COMMIT_MSG || COMMIT_MSG=""
+COMMIT_MSG=${COMMIT_MSG:-"update - $HOSTNAME"}
+
 #cd ~
-pushd $FLAKE && git pull --rebase --autostash && (git commit -a -m "update - $HOSTNAME" || true) && popd
+pushd $FLAKE && git pull --rebase --autostash && (git commit -a -m "$COMMIT_MSG" || true) && popd
 
 # Pull the private ssh-config sync repo (modules/home-manager/ssh reads it
 # at build time). Not fatal if it isn't cloned yet on this host — see
@@ -51,6 +54,7 @@ nh os boot $UPDATE_FLAG --impure $FLAKE --ask | tee -a $LOG
 # push on `nix flake check`: `nh os boot` above only built *this* host, a
 # broken eval for a different host wouldn't be caught by that build alone,
 # and giedi-prime pulls whatever lands here.
-pushd $FLAKE && (git commit -a -m "update - $HOSTNAME" || true) && (nix flake check --impure && git push || echo "nix flake check failed — not pushing" >&2) && popd
+
+pushd $FLAKE && (git commit -a -m "$COMMIT_MSG" || true) && (nix flake check --impure && git push || echo "nix flake check failed — not pushing" >&2) && popd
 
 nh os info
