@@ -345,7 +345,7 @@ in
       #steam # enabled by programs.steam below
       #lutris
       #protonup-qt
-      #parsec-bin # breaks update 2026-06-29
+      #parsec-bin # broke update 2026-06-29, primarily using sunshine and moonlight now (flathub)
 
       # vpn
       tailscale
