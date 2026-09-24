@@ -4,6 +4,10 @@ Personal NixOS flake configuration — hosts: `caladan` (laptop/desktop, unstabl
 
 All rebuilds assume the flake at `~/flexos` and rely on `nh`. Public repo — private values live *outside* it (see below).
 
+## DISCLAIMER
+
+This flake is a boring, minimalistic config using NixOS the lazy way. I've got a life, I've got three kids and a challenging job. I see fancy concepts like dendritic pattern, disko etc. that would be more elegant and even more declarative, but I do not have the time to maintain their configuration and integrating every nice new concept. Instead, I enjoy Nix giving me what I missed since using Linux in the mid 90ies: even after years of using the same system having a clean and declarative config for my machines.
+
 ## Hosts & workflows
 
 ### caladan (primary machine)
