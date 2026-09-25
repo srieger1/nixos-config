@@ -41,4 +41,11 @@
     path = "/run/secrets/linkding_env";
     mode = "0400";
   };
+
+  # atticd RS256 JWT signing secret; content is a one-line environment file:
+  #   ATTIC_SERVER_TOKEN_RS256_SECRET_BASE64=<openssl genrsa -traditional 4096 | base64 -w0>
+  # Read by systemd (root) as EnvironmentFile — 0400 root-owned is fine.
+  sops.secrets.attic_rs256_secret = {
+    mode = "0400";
+  };
 }

@@ -184,5 +184,11 @@
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  # attic on cardassia (shared Nix binary cache). Uncomment AFTER the one-off
+  # bootstrap (hosts/cardassia/attic.nix); public key via `attic cache info
+  # flexos` on caladan.
+  #nix.settings.extra-substituters = [ "http://192.168.78.247:8080/flexos" ];
+  #nix.settings.extra-trusted-public-keys = [ "<attic flexos public key>" ];
+
   system.stateVersion = "26.11"; # Did you read the comment?
 }

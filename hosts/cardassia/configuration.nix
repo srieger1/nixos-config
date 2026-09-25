@@ -15,6 +15,7 @@
       ./ddclient.nix
       ./linkding.nix
       ./rtmp.nix
+      ./attic.nix
       #./unifi.nix
     ];
 
@@ -157,7 +158,7 @@
   services.qemuGuest.enable = true;
 
   # Open ports in the firewall.
-  networking.firewall.allowedTCPPorts = [ 22 80 443 8082 8096 9000 24744 24745 28981 ];
+  networking.firewall.allowedTCPPorts = [ 22 80 443 8080 8082 8096 9000 24744 24745 28981 ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;

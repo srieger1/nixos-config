@@ -95,6 +95,13 @@
     "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
   ];
 
+  # attic on cardassia (shared cache for OpenLogi/containerlab/pumpkin builds).
+  # Uncomment AFTER the one-off bootstrap (hosts/cardassia/attic.nix): the
+  # public key comes from `attic cache info flexos` on caladan. Without the
+  # key nix would refuse the cache's paths as untrusted.
+  #nix.settings.extra-substituters = [ "http://192.168.78.247:8080/flexos" ];
+  #nix.settings.extra-trusted-public-keys = [ "<attic flexos public key>" ];
+
   nixpkgs.config.allowUnfree = true;
 
   fonts.packages = with pkgs; [

@@ -597,6 +597,7 @@ in
     pciutils
     psmisc # killall, ...
     clinfo
+    attic-client # push builds to the attic cache on cardassia (hosts/cardassia/attic.nix)
     #kdePackages.xwaylandvideobridge # needed for x11 programs using video in wayland
     #spice-gtk # needed for usb pass through in virt-manager
     usbutils # lsusb etc.
