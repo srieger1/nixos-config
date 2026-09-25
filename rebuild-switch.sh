@@ -6,6 +6,13 @@ LOG="$FLAKE/log/nixos-update-$HOSTNAME.log"
 DATE=$(date)
 echo "===== REBUILD ===== $DATE" >>$LOG
 set -o pipefail
+
+echo "Changes (git diff):"
+echo "====================================================="
+echo ""
+echo
+git diff
+echo
 read -r -e -p "Commit message [rebuild - $HOSTNAME]: " COMMIT_MSG || COMMIT_MSG=""
 COMMIT_MSG=${COMMIT_MSG:-"rebuild - $HOSTNAME"}
 pushd $FLAKE && git pull --rebase --autostash && (git commit -a -m "$COMMIT_MSG" || true) && popd

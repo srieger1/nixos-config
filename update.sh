@@ -25,6 +25,11 @@ DATE=$(date)
 UPDATE_FLAG=""
 [ "$HOSTNAME" = "caladan" ] && UPDATE_FLAG="-u"
 
+echo "Changes (git diff):"
+echo "====================================================="
+echo
+git diff
+echo
 read -r -e -p "Commit message [update - $HOSTNAME]: " COMMIT_MSG || COMMIT_MSG=""
 COMMIT_MSG=${COMMIT_MSG:-"update - $HOSTNAME"}
 
