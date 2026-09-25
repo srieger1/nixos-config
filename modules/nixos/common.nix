@@ -90,17 +90,17 @@
   ];
   # binary cache for llm-agents-nix's source-typed packages (claude-code, dsh):
   # avoids compiling their bun/JS dependency graph from scratch.
-  nix.settings.extra-substituters = [ "https://cache.numtide.com" ];
+  # attic on cardassia (shared cache for OpenLogi/containerlab/pumpkin builds):
+  # bootstrap in hosts/cardassia/attic.nix; cache is public (pull needs no
+  # token); pushes from caladan via `attic push flexos /run/current-system`.
+  nix.settings.extra-substituters = [
+    "https://cache.numtide.com"
+    "http://192.168.78.247:8080/flexos"
+  ];
   nix.settings.extra-trusted-public-keys = [
     "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+    "flexos:Ea0r+Ec1NpdDr1tNylfhGpPEVJ5s0QZXNvUYjbZgoGc="
   ];
-
-  # attic on cardassia (shared cache for OpenLogi/containerlab/pumpkin builds).
-  # Uncomment AFTER the one-off bootstrap (hosts/cardassia/attic.nix): the
-  # public key comes from `attic cache info flexos` on caladan. Without the
-  # key nix would refuse the cache's paths as untrusted.
-  #nix.settings.extra-substituters = [ "http://192.168.78.247:8080/flexos" ];
-  #nix.settings.extra-trusted-public-keys = [ "<attic flexos public key>" ];
 
   nixpkgs.config.allowUnfree = true;
 
