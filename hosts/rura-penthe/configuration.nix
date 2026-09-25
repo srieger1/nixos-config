@@ -187,7 +187,7 @@
   # attic on cardassia (shared Nix binary cache, cache "flexos", public pull).
   # Lets rura-penthe pull builds (e.g. pumpkin) instead of compiling on the VM.
   nix.settings.extra-substituters = [ "http://192.168.78.247:8080/flexos" ];
-  nix.settings.extra-trusted-public-keys = [ "flexos:Ea0r+Ec1NpdDr1tNylfhGpPEVJ5s0QZXNvUYjbZgoGc=" ];
+  nix.settings.extra-trusted-public-keys = [ "flexos:8L+xyZAFo+xITHqxgaDAob8WwGTXHBiSmXvZ5z9s8Jg=" ];
 
   system.stateVersion = "26.11"; # Did you read the comment?
 }

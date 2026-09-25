@@ -99,7 +99,7 @@
   ];
   nix.settings.extra-trusted-public-keys = [
     "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
-    "flexos:Ea0r+Ec1NpdDr1tNylfhGpPEVJ5s0QZXNvUYjbZgoGc="
+    "flexos:8L+xyZAFo+xITHqxgaDAob8WwGTXHBiSmXvZ5z9s8Jg="
   ];
 
   nixpkgs.config.allowUnfree = true;
