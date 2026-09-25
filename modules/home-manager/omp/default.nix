@@ -65,6 +65,38 @@ let
     advisor.enabled = false;
     autolearn.enabled = false;
   };
+  # GWDG Academic Cloud CoCo-AI (SAIA): OpenAI-compatible API at
+  # https://chat-ai.academiccloud.de/v1, key resolved from models.yml below.
+  ompCocoAi = (pkgs.formats.yaml { }).generate "omp-coco-ai.yml" {
+    modelRoles = {
+      # GWDG serves the same GLM the default config uses via openrouter.
+      # Other CoCo-AI models: gwdg-saia/qwen3-coder-next (262K, coding),
+      # gwdg-saia/devstral-2-123b-instruct-2512, gwdg-saia/qwen3.5-397b-a17b.
+      default = "gwdg-saia/glm-5.3-flash:high";
+      advisor = "gwdg-saia/glm-5.3-flash";
+      smol = "gwdg-saia/glm-5.3-flash";
+      tiny = "gwdg-saia/glm-5.3-flash";
+    };
+    # GWDG SAIA has no flat-rate plan: advisor/autolearn burn API quota.
+    advisor.enabled = false;
+    autolearn.enabled = false;
+  };
+
+  # models.yml: custom OpenAI-compatible providers (config.yml has no baseUrl
+  # key — models.yml is the only way to add non-builtin hosted providers).
+  # The "!..." apiKey is a shell-command resolver: omp uses trimmed stdout.
+  # The key file itself stays outside the nix store (0600), so the closure
+  # never contains the secret.
+  ompModels = (pkgs.formats.yaml { }).generate "models.yml" {
+    providers.gwdg-saia = {
+      baseUrl = "https://chat-ai.academiccloud.de/v1";
+      api = "openai-completions";
+      authHeader = true;
+      apiKey = "!cat ${config.home.homeDirectory}/.config/openai-api-keys/gwdg-academiccloud-coco-saia.key";
+      discovery.type = "openai-models-list";
+    };
+  };
+
   ompFlexnetAi = (pkgs.formats.yaml { }).generate "omp-flexnet-ai.yml" {
     modelRoles = {
       #default = "lm-studio/qwen/qwen3-30b-a3b-2507";
@@ -89,6 +121,9 @@ let
     export LM_STUDIO_BASE_URL=http://localhost:1234/v1
     exec omp --config ${ompLocalAi} "$@"
   '';
+  ompCocoAiBin = pkgs.writeShellScriptBin "omp-coco-ai" ''
+    exec omp --config ${ompCocoAi} "$@"
+  '';
   ompFlexnetAiBin = pkgs.writeShellScriptBin "omp-flexnet-ai" ''
     export LM_STUDIO_BASE_URL=http://deep-thought:1234/v1
     exec omp --config ${ompFlexnetAi} "$@"
@@ -103,9 +138,11 @@ in
     ompGpu4Bin
     ompLocalAiBin
     ompFlexnetAiBin
+    ompCocoAiBin
   ];
 
   home.file.".omp/agent/nix-config.yml".source = ompConfig;
+  home.file.".omp/agent/models.yml".source = ompModels;
 
   home.sessionVariables.PI_CONFIG_FILES = ompConfigPath;
 }
