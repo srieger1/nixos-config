@@ -53,10 +53,10 @@
   # custom dns
   # todo: add ipv6 dns
   networking.nameservers = private.nameservers;
-  #networking.resolvconf.enable = pkgs.lib.mkForce false;
-  networking.dhcpcd.extraConfig = "nohook resolv.conf";
-  networking.networkmanager.dns = "none";
-  services.resolved.enable = false;
+  # Split-DNS via systemd-resolved (26.9.2026): global DNS = private.nameservers,
+  # tailscale registriert 100.100.100.100 per link nur für 100.64/10 + MagicDNS.
+  # Vorher schrieb tailscale /etc/resolv.conf um und verdrängte die LAN-DNS.
+  services.resolved.enable = true;
   #networking.networkmanager.appendNameservers = private.nameservers;
 
   # Set your time zone.
