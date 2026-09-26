@@ -39,17 +39,16 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1789224683,
-        "narHash": "sha256-/hFfGxcKgG8uRbvL1gmFehfUEsuNYBf553zHjhlNZb0=",
+        "lastModified": 1790449163,
+        "narHash": "sha256-BWqGSYpBep1D8JxQPFwXVuYsn5LxlB2kR7nfnCQbUjc=",
         "owner": "srl-labs",
         "repo": "containerlab",
-        "rev": "7c7fa1232635bad30d2c9474726afcc06bf74d2e",
+        "rev": "0bb144e1d03fb3546abd15a0565562382ab85437",
         "type": "github"
       },
       "original": {
         "owner": "srl-labs",
         "repo": "containerlab",
-        "rev": "7c7fa1232635bad30d2c9474726afcc06bf74d2e",
         "type": "github"
       }
     },
