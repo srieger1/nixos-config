@@ -24,3 +24,9 @@ if ! nh os switch --impure $FLAKE --ask | tee -a $LOG; then
   exit 1
 fi
 pushd $FLAKE && (nix flake check --impure && git push || echo "nix flake check failed — not pushing" >&2) && popd
+
+# Push the new system closure to the attic cache (flexos, on cardassia) so
+# openlogi, containerlab and pumpkin don't get rebuilt on giedi-prime and
+# rura-penthe. Fire-and-forget in the background; failures must not abort.
+(setsid nix shell nixpkgs#attic-client -c attic push -j1 flexos /run/current-system >>"$LOG" 2>&1) &
+disown

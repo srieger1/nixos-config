@@ -54,7 +54,10 @@
     environmentFile = config.sops.secrets.attic_rs256_secret.path;
 
     settings = {
-      database.url = "postgresql:///atticd?host=/run/postgresql";
+      # sea-orm parses these query params (ConnectOptions): defaults are
+      # max_connections=10, acquire_timeout=30s — under parallel chunk uploads
+      # the pool saturated and produced "Connection pool timed out" 500s.
+      database.url = "postgresql:///atticd?host=/run/postgresql&max_connections=20&acquire_timeout=60";
 
       # Module default; explicit here so the ReadWritePaths story is visible.
       storage = {
