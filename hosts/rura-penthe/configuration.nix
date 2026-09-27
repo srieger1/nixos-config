@@ -116,6 +116,35 @@
     ];
   };
 
+  # TEMPORARY: track upstream master (c808b52, 2026-09-18) for the painting
+  # spawn fix (Pumpkin-MC/Pumpkin#3563 / PR #3564): paintings from the imported
+  # Java world crash the client on join (Painting.recreateFromPacket). Remove
+  # this override once nixpkgs bumps pkgs.pumpkin past the fix.
+  # NOTE: buildRustPackage quirk — cargoHash is NOT overridable via
+  # overrideAttrs; pass cargoDeps (pkgs.rustPlatform.fetchCargoVendor)
+  # explicitly instead.
+  services.pumpkin.package = pkgs.pumpkin.overrideAttrs (old: rec {
+    version = "0.1.0-unstable-2026-09-18";
+    # TEMPORARY transitional build: doCheck off — the upstream telemetry test
+    # needs system CA certs (rustls-native-certs), unavailable in the nix
+    # sandbox (256/257 tests pass; only telemetry_client_send_heartbeat… fails).
+    doCheck = false;
+    src = pkgs.fetchFromGitHub {
+      owner = "Pumpkin-MC";
+      repo = "Pumpkin";
+      hash = "sha256-vg9Z0hEhkO47s2lKMTIgreVmBWzIawLQ4X8wa+/6E9k=";
+      rev = "c808b52c0a0d8dbc5b736126442b9b7a1f33478b";
+      fetchSubmodules = true;
+    };
+    # src at c808b52 needs its own vendor set; hash derived from the failing
+    # vendor-staging FOD ("got:" from the earlier build attempt).
+    cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
+      inherit (old) pname;
+      inherit version src;
+      hash = "sha256-63m2iSETzuT5Xen7lhHH1TJS3Xvv5ppSwSlSgYIpnog=";
+    };
+  });
+
   # Pumpkin 0.1.0 loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
   # while the NixOS module installs whitelist.json into the state dir root —
   # without this link the server starts with an EMPTY whitelist and rejects
