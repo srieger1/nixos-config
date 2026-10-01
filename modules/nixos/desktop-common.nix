@@ -27,6 +27,13 @@
   users.extraGroups.docker.members = [ "flex" ];
 
   networking.networkmanager.enable = true;
+  # NM pushes per-connection DNS + search domains into resolved (scoped to the
+  # link): physical link keeps DHCP DNS as default, tailscale registers
+  # 100.100.100.100 only for the tailnet domains, eduVPN/OpenVPN search
+  # domains land scoped on the tun link instead of clobbering
+  # /etc/resolv.conf (pattern verified on cardassia, 2026-09-26).
+  networking.networkmanager.dns = "systemd-resolved";
+  services.resolved.enable = true;
 
   services.tailscale.enable = true;
   services.openssh.enable = true;
