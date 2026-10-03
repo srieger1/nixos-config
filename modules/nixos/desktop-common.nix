@@ -20,7 +20,8 @@
     pulse.enable = true;
   };
   #programs.librepods.enable = true; # currently disabled don't need to tune airpods and don't use them so much, also needs to run desktop app with constant window
-  programs.solaar.enable = true;
+  # solaar lives in hosts/caladan/configuration.nix — programs.solaar doesn't
+  # exist in giedi-prime's stable-26.05 nixpkgs, keeping it here broke its eval.
 
   virtualisation.libvirtd.enable = true;
   virtualisation.vswitch.enable = true;

@@ -522,6 +522,7 @@ in
 
   hardware.logitech.wireless.enable = true;
   #programs.openlogi.enable = true; # solaar is enough for now - I don't really use smart functions
+  programs.solaar.enable = true;
 
   # hosts file allow write for containerlab
   environment.etc.hosts.enable = false;

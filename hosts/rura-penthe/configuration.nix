@@ -220,6 +220,9 @@
   # attic on cardassia (shared Nix binary cache, cache "flexos", public pull).
   # Lets rura-penthe pull builds (e.g. pumpkin) instead of compiling on the VM.
   nix.settings.extra-substituters = [ "http://192.168.78.247:8080/flexos" ];
+  # Only reachable from flexnet/VPN; 2s connect timeout fails fast when away
+  # (see modules/nixos/common.nix for rationale).
+  nix.settings.connect-timeout = 2;
   nix.settings.extra-trusted-public-keys = [ "flexos:8L+xyZAFo+xITHqxgaDAob8WwGTXHBiSmXvZ5z9s8Jg=" ];
 
   system.stateVersion = "26.11"; # Did you read the comment?
