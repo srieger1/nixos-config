@@ -103,7 +103,7 @@
         homeManagerInput = inputs.home-manager-unstable;
         extraModules = [
           inputs.nix-flatpak.nixosModules.nix-flatpak
-          inputs.openlogi.nixosModules.default
+          #inputs.openlogi.nixosModules.default
           inputs.containerlab.nixosModules.default
         ];
       };
@@ -114,7 +114,7 @@
         extraSpecialArgs = { private = privateFor "giedi-prime"; };
         extraModules = [
           inputs.nix-flatpak.nixosModules.nix-flatpak
-          inputs.openlogi.nixosModules.default
+          #inputs.openlogi.nixosModules.default
           inputs.containerlab.nixosModules.default
         ];
       };
