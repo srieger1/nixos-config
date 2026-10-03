@@ -19,7 +19,8 @@
     alsa.support32Bit = true;
     pulse.enable = true;
   };
-  programs.librepods.enable = true;
+  #programs.librepods.enable = true; # currently disabled don't need to tune airpods and don't use them so much, also needs to run desktop app with constant window
+  programs.solaar.enable = true;
 
   virtualisation.libvirtd.enable = true;
   virtualisation.vswitch.enable = true;

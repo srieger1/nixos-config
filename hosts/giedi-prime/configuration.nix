@@ -130,7 +130,6 @@
       go
       openvswitch
       #starshipshell # replaced by programs.starship
-      solaar
       lan-mouse
   ];
 

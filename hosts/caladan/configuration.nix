@@ -521,9 +521,7 @@ in
   ];
 
   hardware.logitech.wireless.enable = true;
-  #hardware.logitech.wireless.enableGraphical = true; # deprecated, use programs.solaar.enable
-  programs.solaar.enable = true;
-  programs.openlogi.enable = true;
+  #programs.openlogi.enable = true; # solaar is enough for now - I don't really use smart functions
 
   # hosts file allow write for containerlab
   environment.etc.hosts.enable = false;
@@ -558,7 +556,9 @@ in
       "me.dumke.Reinschrift"
       "net.sf.VICE"
       "net.trowell.typesetter"
-      "org.freedesktop.Bustle"
+      "com.moonlight_stream.Moonlight"
+      "tech.dongdongbh.mindwtr"
+      #"org.freedesktop.Bustle"
     ];
     update.onActivation = true;
     # Flatpak sandboxes get an allow-listed session bus; mindwtr (Tauri) hits
