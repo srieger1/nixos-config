@@ -36,7 +36,7 @@
     # bump on our side was forcing a ~13min from-source rebuild via the shared
     # input. Letting it pin its own nixpkgs decouples rebuilds from our routine
     # `update.sh` runs, at the cost of a second nixpkgs closure.
-    openlogi.url = "github:AprilNEA/OpenLogi";
+    #openlogi.url = "github:AprilNEA/OpenLogi";
 
     # 2026-09-26: unpin — srl-labs fixed the vendorHash via #3389 (merged
     # 0bb144e, hash now xp6YIoq…); see also our PR #3419 (closed as redundant).
