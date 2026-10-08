@@ -104,6 +104,9 @@
     settings.commands.use_console = false;
     settings.white_list = true;
     settings.enforce_whitelist = true;
+    # Kids' server: creative mode for everyone, incl. existing players.
+    settings.default_gamemode = "Creative";
+    settings.force_gamemode = true;
     whitelist.entries = [
       {
         uuid = "67b73e60-20e9-43a4-8457-1e90a752f51e";
