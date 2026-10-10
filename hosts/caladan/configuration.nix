@@ -51,6 +51,7 @@ in
     # 16GB * 1024 * 1024 * 1024 / 4096 page
     #"ttm.page_pool_size=4194304" # 16GB * 1024 * 1024 * 1024 / 4096 page
     "amdgpu.dcdebugmask=0x10" # seems to fix system freeze on >=6.15? (e.g., ctrl+tab switch in gnome?) amdgpu.dcdebugmask seems to fix 780M glitches, disables panel self refresh
+    "pm_debug_messages=1" # 2026-10-10: log the exact ACPI wake source ("PM: Triggering wakeup from IRQ") for recurring suspend aborts — remove again once stable
     "zswap.enabled=1" # enables zswap
     "zswap.compressor=lz4" # compression algorithm
     "zswap.max_pool_percent=20" # maximum percentage of RAM that zswap is allowed to use
@@ -115,22 +116,36 @@ in
     wantedBy = [ "suspend.target" "suspend-then-hibernate.target" "hibernate.target" "hybrid-sleep.target" ];
   };
 
-  # XHC0 (the USB-C xHCI host controller, pci:0000:c3:00.3) fires spurious
-  # ACPI wakeup events that immediately abort s2idle suspend (system wakes
-  # ~1s after entering sleep, confirmed via `PM: Triggering wakeup from
-  # IRQ 7`/"ACPI non-EC GPE wakeup" in dmesg with pm_debug_messages=1, and
-  # reproduced by toggling `echo XHC0 > /proc/acpi/wakeup`). The udev rule
-  # sets the baseline at device-add time, but xhci_pci's probe() can
-  # re-enable wakeup after that (add-event/probe ordering isn't
+  # XHC0 (the USB-C xHCI host controller, pci:0000:c3:00.3) fired spurious
+  # ACPI wakeup events that immediately abort s2idle suspend (system woke
+  # ~1s after entering sleep; attribution needed pm_debug_messages=1). The
+  # udev rule sets the baseline at device-add time, but xhci_pci's probe()
+  # can re-enable wakeup after that (add-event/probe ordering isn't
   # guaranteed), so also force it off right before every suspend, same
   # pattern as ath11k-suspend above.
+  #
+  # 2026-10-10: same pattern for the dock-side controllers. Manual "Lock &
+  # Suspend" from noctalia with the Thunderbolt dock attached aborts s2idle
+  # after ~5s (journal: amd_pmc "Last suspend didn't reach deepest state" +
+  # dock re-enumeration: thunderbolt 1-2 retimer disconnect, usb7/usb8
+  # teardown, r8152 re-probe; wake source was an amdgpu DMUB HPD IRQ,
+  # link_index=6 — i.e. a hotplug event from the docked monitors). A
+  # dock-attached lid-close with the cable pulled sleeps 12h clean, with
+  # the cable in it wakes immediately — so the dock is the waker. Covers
+  # the c5:00.x dock path (XHC3=c5:00.3, XHC4=c5:00.4, NHI0=c5:00.5,
+  # NHI1=c5:00.6); the laptop's own XHC1 (c3:00.4) intentionally stays
+  # enabled so USB devices you plug directly keep working as wake sources.
   services.udev.extraRules = ''
     SUBSYSTEM=="pci", KERNEL=="0000:c3:00.3", ATTR{power/wakeup}="disabled"
+    SUBSYSTEM=="pci", KERNEL=="0000:c5:00.3", ATTR{power/wakeup}="disabled"
+    SUBSYSTEM=="pci", KERNEL=="0000:c5:00.4", ATTR{power/wakeup}="disabled"
+    SUBSYSTEM=="pci", KERNEL=="0000:c5:00.5", ATTR{power/wakeup}="disabled"
+    SUBSYSTEM=="pci", KERNEL=="0000:c5:00.6", ATTR{power/wakeup}="disabled"
   '';
 
   systemd.services.xhci-wakeup-disable = {
     enable = true;
-    description = "Suspend: force-disable XHC0 ACPI wakeup";
+    description = "Suspend: force-disable spurious ACPI wakeups (XHC0 + dock-side USB-C/Thunderbolt)";
     unitConfig = {
       Before = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
     };
@@ -138,7 +153,9 @@ in
       Type = "oneshot";
     };
     script = ''
-      echo disabled > /sys/bus/pci/devices/0000:c3:00.3/power/wakeup
+      for dev in 0000:c3:00.3 0000:c5:00.3 0000:c5:00.4 0000:c5:00.5 0000:c5:00.6; do
+        echo disabled > /sys/bus/pci/devices/$dev/power/wakeup || true
+      done
     '';
     wantedBy = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
   };
@@ -357,10 +374,11 @@ in
       #onlyoffice-desktopeditors
 
       # emu / retro
-      fsuae
+      #fsuae # 2026-10-10: fails to build with gcc-16 (`std::numbers` collision in statusline.cpp), upstream dead since 2023 — use amiberry instead
       #fsuae-launcher@master # currently build in unstable breaks with python "distutils" not found, 2024-08-05
-      fsuae-launcher
+      #fsuae-launcher # removed with fsuae (see above)
       #vice # currently breaks build # flatpak now
+      amiberry # actively maintained UAE fork, replaces nix fs-uae (gcc-16 breakage, dead upstream); needs Kickstart ROMs (own files, or AROS34.5 replacements from the BlitterStudio/amiberry-kickstarts GitHub repo — not a nixpkgs package)
 
       # network
       #gns3-gui@2.2.42 # lock gns3-gui to a specific version
@@ -549,7 +567,7 @@ in
       "org.libreoffice.LibreOffice"
       { appId = "ch.threema.threema-desktop"; origin = "threema-desktop"; }
       "com.bitwarden.desktop"
-      "com.blitterstudio.amiberry"
+      #"com.blitterstudio.amiberry" # 2026-10-10: replaced by nixpkgs amiberry (fs-uae dropped, see emu section); list is additive-only, uninstall manually via `flatpak uninstall com.blitterstudio.amiberry`
       "com.github.IsmaelMartinez.teams_for_linux"
       "com.github.wwmm.easyeffects"
       "com.protonvpn.www"
