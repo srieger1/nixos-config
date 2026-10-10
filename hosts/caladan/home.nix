@@ -12,6 +12,7 @@
     ../../modules/home-manager/omp
     ../../modules/home-manager/ssh
     ../../modules/home-manager/herdr
+    ../../modules/home-manager/hermes.nix
     ../../modules/home-manager/nvim
   ];
 

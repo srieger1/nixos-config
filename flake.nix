@@ -45,6 +45,11 @@
       #inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
     #chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # cachyos kernel etc. # dead
 
     #hyprland.url = "github:hyprwm/Hyprland";

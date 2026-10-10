@@ -238,6 +238,8 @@ in
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.flex.extraGroups = [ "dialout" ];
+  # keep the user manager alive after logout — hermes-agent gateway needs it
+  users.users.flex.linger = true;
 
   users.users.flex.packages = with pkgs; [
 
@@ -716,6 +718,16 @@ in
   # List services that you want to enable:
 
   services.fwupd.enable = true;
+
+  # ollama as a system service for the hermes-agent gateway (localhost:11434).
+  # Vulkan build — the same package the user already had in home packages.
+  services.ollama = {
+    enable = true;
+    package = pkgs.ollama-vulkan;
+    # keep the model resident 24h after each use; gateway bots otherwise
+    # hit a 5-minute idle unload and every request pays a model re-load
+    environmentVariables = { OLLAMA_KEEP_ALIVE = "24h"; };
+  };
 
   # tailscale/openssh enable live in modules/nixos/desktop-common.nix
   #services.tailscale.useRoutingFeatures = "client";
