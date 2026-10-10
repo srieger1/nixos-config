@@ -73,20 +73,21 @@
     # `(final: prev: { xxx = prev.xxx.override { ... }; })`
     #(import ./overlay3)
 
-    (final: prev: {
-      # TEMPORARY (2026-09-24): test build for noctalia#4571 — dock icon fix
-      # commit c974dbf "fix(dock): resolve mismatched running app identities"
-      # (fix is 83 commits ahead of the v5.1.0 tag, hence the src override).
-      # REMOVE once the fix is in a noctalia release that nixpkgs ships.
-      noctalia = prev.noctalia.overrideAttrs (old: rec {
-        src = prev.fetchFromGitHub {
-          owner = "noctalia-dev";
-          repo = "noctalia";
-          rev = "c974dbfabf3d258cc9e813a3b17c2b608017d511";
-          hash = "sha256-UK7DdfvCUZJAOBqzwwO8vh8uv7E8OzS0oWzte4J3/dw=";
-        };
-      });
-    })
+    #(final: prev: {
+    #  # REMOVED 2026-10-10: the c974dbf dock-icon fix (noctalia#4571) is in
+    #  # the 5.2.1 release that nixpkgs now ships — compare
+    #  # c974dbf...v5.2.1 was ahead 107 / behind 0. Kept commented as
+    #  # documentation; this overlay also papered over the 5.1.0
+    #  # versionCheckPhase quirk (binary still reported v5.1.0).
+    #  noctalia = prev.noctalia.overrideAttrs (old: rec {
+    #    src = prev.fetchFromGitHub {
+    #      owner = "noctalia-dev";
+    #      repo = "noctalia";
+    #      rev = "c974dbfabf3d258cc9e813a3b17c2b608017d511";
+    #      hash = "sha256-UK7DdfvCUZJAOBqzwwO8vh8uv7E8OzS0oWzte4J3/dw=";
+    #    };
+    #  });
+    #})
 
     # not needed anymore:
     #(import ./xdg-fix)
