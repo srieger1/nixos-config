@@ -3,8 +3,16 @@
 # home-manager module for the niri config, alternative to gnome on caladan.
 # Validates config.kdl at build time, per https://wiki.nixos.org/wiki/Niri
 
-{ pkgs, ... }:
-{
+ { pkgs, ... }:
+ let
+   # Super+P display cycle (extend -> external-only -> panel-only). No mirror:
+   # niri 26.04 supports neither `msg output ... mirror` nor a config mirror
+   # node (verified live 15.10.2026). Bound as Super+P in config.kdl.
+   display-cycle = pkgs.writeShellScriptBin "display-cycle" (builtins.readFile ./display-cycle.sh);
+ in
+ {
+   home.packages = [ display-cycle ];
+
   xdg.configFile."niri/config.kdl".source =
     pkgs.runCommand "niri-config-checked"
       {

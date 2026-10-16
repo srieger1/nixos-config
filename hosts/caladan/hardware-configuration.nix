@@ -31,9 +31,9 @@
       "uid=1000"
       "gid=100" 
       "nofail"
-      "x-systemd.automount"        # lazy: nur mounten wenn jemand drauf zugreift
-      "x-systemd.idle-timeout=60"  # nach 60s Inaktivität automatisch unmounten
-      "x-gvfs-hide"                # vor GNOME-Dateimanager verstecken
+      "x-systemd.automount"        # lazy: only mount when actually accessed
+      "x-systemd.idle-timeout=60"  # auto-unmount after 60s of inactivity
+      "x-gvfs-hide"                # hide from the GNOME file manager
     ];
   };
 

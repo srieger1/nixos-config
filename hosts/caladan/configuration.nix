@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, inputs, ... }:
+ { config, pkgs, lib, inputs, ... }:
 
 let
   # niri doesn't advertise a desktop environment Electron/libsecret recognizes
@@ -195,15 +195,36 @@ in
   #services.desktopManager.plasma6.enable = true;
   services.udev.packages = with pkgs; [ gnome-settings-daemon ];
 
-  # niri: scrollable-tiling Wayland compositor, offered as an alternative
-  # session to GNOME from the same GDM login screen (no DM change needed —
-  # GDM already lists every registered Wayland session). Paired with
-  # noctalia v5 (see modules/home-manager/niri) for bar/launcher/lock.
-  # https://wiki.nixos.org/wiki/Niri
+  # 2026-10-15 step 1 GDM -> noctalia-greeter (greetd): the greeter ships its
+  # own wlroots compositor (no niri/Cage needed) and lists all registered
+  # Wayland sessions — niri AND GNOME. GNOME is kept as fallback for good:
+  # niri 26.04 can't mirror outputs, but screen mirroring to a projector
+  # (GNOME's Super+P) was actually needed in practice (2026-10-16).
+  # Keyring unlock moves via PAM with it: greetd instead of gdm (line ~241).
+  services.greetd = {
+    enable = true;
+    settings = {
+      default_session = {
+        command = "${pkgs.noctalia-greeter}/bin/noctalia-greeter-session";
+        user = "greeter";
+      };
+    };
+  };
+  # 2026-10-15 step 1: GDM is off, greetd owns the seat. mkForce because GDM
+  # stays enabled in modules/nixos/desktop-common.nix (shared with
+  # giedi-prime) — that host keeps running GNOME, here it's not the login
+  # screen anymore (but the GNOME session remains selectable as fallback).
+  services.displayManager.gdm.enable = lib.mkForce false;
+
+  # niri: scrollable-tiling Wayland compositor. Default session under the new
+  # noctalia-greeter (greetd, see above); GNOME stays registered as fallback.
+  # Paired with noctalia v5 (see modules/home-manager/niri) for
+  # bar/launcher/lock. https://wiki.nixos.org/wiki/Niri
   programs.niri.enable = true;
   # Explicit here since niri's setup guide calls it out directly; GNOME's
   # module already enables it as a side effect, so this is a no-op for now
-  # but keeps niri working standalone if GNOME is ever removed.
+  # but matters if GNOME ever gets dropped — GNOME stays as the fallback
+  # session (mirroring), so polkit comes from there for now.
   security.polkit.enable = true;
 
   # Configure keymap in X11 (layout set in modules/nixos/desktop-common.nix)
@@ -236,11 +257,15 @@ in
   # compat) lives in modules/nixos/desktop-common.nix; jack is caladan-only.
   services.pipewire.jack.enable = true;
 
-  #services.gnome.gnome-keyring.enable = true;
-  #security.pam.services = {
-  #  gdm.enableGnomeKeyring = true;
-  #  #login.enableGnomeKeyring = true;
-  #}
+  services.gnome.gnome-keyring.enable = true;
+  # 2026-10-15 step 1: keyring unlock via PAM moves from gdm to greetd (GDM
+  # is off). Without this, vscode/signal would face a locked keyring right
+  # after login (see the wrapPasswordStore comment above).
+  security.pam.services = {
+    greetd.enableGnomeKeyring = true;
+    #gdm.enableGnomeKeyring = true;
+    #login.enableGnomeKeyring = true;
+  };
   #services.gnome.gnome-remote-desktop.enable = true;
 
   # breaks e.g. nextcloud tray icon:

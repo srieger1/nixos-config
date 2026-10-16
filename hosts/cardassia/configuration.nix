@@ -54,8 +54,8 @@
   # todo: add ipv6 dns
   networking.nameservers = private.nameservers;
   # Split-DNS via systemd-resolved (26.9.2026): global DNS = private.nameservers,
-  # tailscale registriert 100.100.100.100 per link nur für 100.64/10 + MagicDNS.
-  # Vorher schrieb tailscale /etc/resolv.conf um und verdrängte die LAN-DNS.
+  # tailscale registers 100.100.100.100 per link, only for 100.64/10 + MagicDNS.
+  # Previously tailscale rewrote /etc/resolv.conf and displaced the LAN DNS.
   services.resolved.enable = true;
   #networking.networkmanager.appendNameservers = private.nameservers;
 

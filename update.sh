@@ -25,6 +25,8 @@ DATE=$(date)
 UPDATE_FLAG=""
 [ "$HOSTNAME" = "caladan" ] && UPDATE_FLAG="-u"
 
+cd ~/flexos
+
 echo "Changes (git diff):"
 echo "====================================================="
 echo
