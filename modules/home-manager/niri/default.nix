@@ -9,9 +9,10 @@
    # niri 26.04 supports neither `msg output ... mirror` nor a config mirror
    # node (verified live 15.10.2026). Bound as Super+P in config.kdl.
    display-cycle = pkgs.writeShellScriptBin "display-cycle" (builtins.readFile ./display-cycle.sh);
+  # Super+P mirror state runs wl-mirror fullscreen on the external output.
  in
  {
-   home.packages = [ display-cycle ];
+   home.packages = [ display-cycle pkgs.wl-mirror ];
 
   xdg.configFile."niri/config.kdl".source =
     pkgs.runCommand "niri-config-checked"
