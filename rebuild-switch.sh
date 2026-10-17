@@ -7,6 +7,8 @@ DATE=$(date)
 echo "===== REBUILD ===== $DATE" >>$LOG
 set -o pipefail
 
+cd /home/flex/flexos
+
 echo "Changes (git diff):"
 echo "====================================================="
 echo ""

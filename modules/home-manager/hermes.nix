@@ -35,10 +35,19 @@
      # OpenAI-compatible endpoints (base_url + key_env) for per-call choice.
      settings = {
        model = {
-         default = "gpt-oss:20b";
-         provider = "custom";
-         base_url = "http://localhost:11434/v1";
+         default = "z-ai/glm-5.3-flash";
+         provider = "openrouter";
        };
+       # Local ollama as fallback chain (fallback_model: list of
+       # {provider, model} dicts, schema verified against hermes_cli/config.py
+       # _validate_fallback_model). Used when OpenRouter fails/is rate-limited.
+       fallback_model = [
+         {
+           provider = "custom";
+           model = "gpt-oss:20b";
+           base_url = "http://localhost:11434/v1";
+         }
+       ];
        providers = {
          openrouter = {
            base_url = "https://openrouter.ai/api/v1";
