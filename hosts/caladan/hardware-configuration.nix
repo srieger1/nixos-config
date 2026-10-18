@@ -23,6 +23,11 @@
       fsType = "vfat";
     };
 
+  fileSystems."/2nd-system" =
+    { device = "/dev/disk/by-uuid/eec4bf6a-b4ab-47d3-9db7-9aa8985fcb8b";
+      fsType = "btrfs";
+    };
+
   fileSystems."/windows" = {
     device = "/dev/nvme0n1p4";
     fsType = "ntfs-3g";
