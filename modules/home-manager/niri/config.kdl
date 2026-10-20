@@ -145,6 +145,14 @@ overview {
     }
 }
 
+// niri-zoom-Overlay nicht an andere Screencopy-Clients (grim, OBS, …)
+// durchreichen, damit Aufnahmen das zoomte Bild nicht doppelt zeigen
+// (siehe niri-zoom INSTALL.md).
+layer-rule {
+    match namespace="^niri-zoom$"
+    block-out-from "screen-capture"
+}
+
 binds {
     Mod+Shift+ssharp { show-hotkey-overlay; }
 
@@ -320,4 +328,16 @@ binds {
     Ctrl+Alt+Delete { quit; }
 
     Mod+Shift+P { power-off-monitors; }
+
+    // ─── Lupe: niri-zoom (Ctrl+Scroll, zoomt auf einen eingefrorenen Frame) ───
+    // cooldown-ms=0 ist wichtig: ohne throttled niri die Scroll-Events und das
+    // Zoomen fühlt sich zäh an (siehe niri-zoom INSTALL.md).
+    Ctrl+WheelScrollUp   cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "in"; }
+    Ctrl+WheelScrollDown cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "out"; }
+    Mod+Ctrl+Z hotkey-overlay-title="Zoom zurücksetzen: niri-zoom" { spawn "/home/flex/.local/bin/niri-zoomctl" "reset"; }
+
+    // ─── Lupe: shmooz (Rechteck-Zoom via Shift+Linksklick-Ziehen) ───
+    // Toggle: läuft schon → beenden, sonst starten. Im Overlay: Scroll = Zoom
+    // am Pointer, Shift+Drag = Rechteck auswählen, Esc/Rechtsklick = Ende.
+    Mod+Shift+Z hotkey-overlay-title="Lupe: shmooz (Rechteck-Zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec shmooz"; }
 }
