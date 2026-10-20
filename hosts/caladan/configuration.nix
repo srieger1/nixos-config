@@ -254,7 +254,7 @@ in
   # https://nixos.wiki/wiki/Printing
   #services.printing.drivers = [ pkgs.hplip ]; # breaks build 20.10.2026
   # universal standard drivers for printing on the go:
-  drivers = [ pkgs.gutenprint pkgs.cups-filters ]; 
+  services.printing.drivers = [ pkgs.gutenprint pkgs.cups-filters ]; 
 
   # Enable sound with pipewire. Base config (pulseaudio disabled, alsa/pulse
   # compat) lives in modules/nixos/desktop-common.nix; jack is caladan-only.
