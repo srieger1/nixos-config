@@ -37,6 +37,10 @@
        model = {
          default = "z-ai/glm-5.3-flash";
          provider = "openrouter";
+         # Explicit: without this the deep-merge kept the stale runtime value
+         # `http://localhost:11434/v1` under provider=openrouter, and OpenRouter
+         # calls went to ollama (404 "model z-ai/glm-5.3-flash not found").
+         base_url = "https://openrouter.ai/api/v1";
        };
        # Local ollama as fallback chain (fallback_model: list of
        # {provider, model} dicts, schema verified against hermes_cli/config.py
