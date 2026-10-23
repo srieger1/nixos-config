@@ -95,14 +95,16 @@
   # token); pushes from caladan via `attic push flexos /run/current-system`.
   nix.settings.extra-substituters = [
     "https://cache.numtide.com"
-    "http://192.168.78.247:8080/flexos"
+    "http://cardassia:8080/flexos"
   ];
-  # Global connect timeout: outside flexnet/VPN the attic IP is unreachable and
-  # would otherwise stall every substituter query for ~2min (OS default). No
-  # per-substituter granularity exists in nix; global 2s is harmless because
-  # nix queries all substituters in parallel and reachable ones connect in ms.
-  # 1s would be too aggressive on weak links (cache.nixos.org connects >1s on
-  # bad WiFi → needless local builds).
+  # "cardassia" resolves via Tailscale MagicDNS (cardassia.tail63f8fc.ts.net):
+  # reachable over Tailscale from anywhere; without Tailscale the DNS lookup
+  # fails instantly instead of stalling on connect timeouts. rura-penthe keeps
+  # the raw IP (no Tailscale on the VM, permanently in flexnet).
+  # Global connect timeout: no per-substituter granularity exists in nix;
+  # global 2s is harmless because nix queries all substituters in parallel and
+  # reachable ones connect in ms. 1s would be too aggressive on weak links
+  # (cache.nixos.org connects >1s on bad WiFi → needless local builds).
   nix.settings.connect-timeout = 2;
   nix.settings.extra-trusted-public-keys = [
     "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="

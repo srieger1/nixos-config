@@ -16,7 +16,7 @@
 #   # 2. admin token (run on cardassia; atticd-atticadm is installed by the module):
 #   #      atticd-atticadm make-token --sub flex --validity 1y \
 #   #        --pull '*' --push '*' --delete '*' --create-cache '*' --configure-cache '*'
-#   # 3. on caladan: attic login cardassia http://192.168.78.247:8080 <token>
+#   # 3. on caladan: attic login cardassia http://cardassia:8080 <token>
 #   #    attic cache create flexos --public
 #   #    attic cache info flexos   # -> Public Key, in common.nix/rura-penthe aktiviert
 #   # 4. push: attic push flexos /run/current-system
