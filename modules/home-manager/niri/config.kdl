@@ -165,8 +165,9 @@ binds {
     // so settings gets Mod+Shift+Comma instead of noctalia's suggested default.
     Mod+Shift+Comma hotkey-overlay-title="Toggle Settings: noctalia" { spawn "noctalia" "msg" "settings-toggle"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: noctalia" { spawn "noctalia" "msg" "session" "lock"; }
-    // 2026-10-15: GNOME Super+P equivalent (minus mirror — niri 26.04 has none):
-    // cycles extend -> external-only -> panel-only, positions round-trip.
+    // 2026-10-15: GNOME Super+P equivalent. niri 26.04 has no native mirror,
+    // so the mirror state is wl-mirror fullscreen on the external output.
+    // Cycles extend -> external-only -> panel-only -> mirror -> extend.
     Super+P hotkey-overlay-title="Cycle display mode: niri" { spawn "display-cycle"; }
 
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }

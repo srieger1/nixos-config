@@ -5,9 +5,10 @@
 
  { pkgs, ... }:
  let
-   # Super+P display cycle (extend -> external-only -> panel-only). No mirror:
+   # Super+P display cycle (extend -> external-only -> panel-only -> mirror):
    # niri 26.04 supports neither `msg output ... mirror` nor a config mirror
-   # node (verified live 15.10.2026). Bound as Super+P in config.kdl.
+   # node (verified live 15.10.2026), so mirror is emulated via wl-mirror.
+   # Bound as Super+P in config.kdl.
    display-cycle = pkgs.writeShellScriptBin "display-cycle" (builtins.readFile ./display-cycle.sh);
   # Super+P mirror state runs wl-mirror fullscreen on the external output.
  in

@@ -15,7 +15,7 @@ extpos_file="$state_dir/niri-external-pos"
 panelpos_file="$state_dir/niri-panel-pos"
 wl_mirror_bin="${WL_MIRROR:-wl-mirror}"
 
-external=$(niri msg outputs | grep -oE '\((DP|HDMI)-[0-9]+\)' | tr -d '()' | head -1 || true)
+external=$(niri msg outputs | grep -oE '\((DP|HDMI)-[A-Za-z0-9-]+\)' | tr -d '()' | head -1 || true)
 if [ -z "$external" ]; then
   # no external: leave mirror state cleanly, back to extend defaults
   pkill -x wl-mirror 2>/dev/null || true
