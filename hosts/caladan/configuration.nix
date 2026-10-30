@@ -74,7 +74,7 @@ in
 
   boot.supportedFilesystems = [ "ntfs" ];
   boot.initrd.kernelModules = [ "lz4" "amdgpu" ];
-  boot.initrd.systemd.enable = true;
+  #boot.initrd.systemd.enable = true; # removed, not supported anymore 10/2026
   # Prevent systemd from waiting for network online 
   # (Optional but recommended for faster boot with VPNs)
   systemd.network.wait-online.enable = false; 
