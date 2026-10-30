@@ -9,7 +9,7 @@
             blur-my-shell.extensionUuid
             vitals.extensionUuid
             appindicator.extensionUuid
-            wiggle.extensionUuid
+            #wiggle.extensionUuid # not supported anymore in nixos 10/2026
             tiling-shell.extensionUuid
             #tiling-assistant.extensionUuid
             just-perfection.extensionUuid
