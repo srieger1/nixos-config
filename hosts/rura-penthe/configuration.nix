@@ -123,12 +123,16 @@
     ];
   };
 
-  # Override dropped 30.10.2026: nixpkgs ships pumpkin 0.2.0+26.3-26.51, which
-  # includes the painting spawn fix (Pumpkin-MC/Pumpkin#3563 / PR #3564) that
-  # c808b52 (0.1.0-unstable-2026-09-18) was pinned for. History: the override
-  # broke at flake.lock 31ecbac because rustc 1.99.0 stack-overflows compiling
-  # pumpkin-data from the old source — moot now. Keep an eye on the whitelist
-  # path below (PR #564671 pending) and the in-game painting join test.
+  # nixpkgs 0.2.0+26.3-26.51 includes the painting spawn fix (#3563/#3564) that
+  # the old c808b52 pin carried. Source stays nixpkgs — but BOTH 0.1.0 and 0.2.0
+  # fail to build with rustc 1.99.0 (flake.lock 31ecbac): rustc stack-overflows
+  # compiling pumpkin-data (huge generated tables + linker-plugin-lto), no
+  # cache.nixos.org hit. rustc's own suggestion is RUST_MIN_STACK=32 MiB, applied
+  # here as a build-env-only override (no src/version/cargoDeps changes). Remove
+  # once nixpkgs/Hydra ships a cached build or upstream fixes the overflow.
+  services.pumpkin.package = pkgs.pumpkin.overrideAttrs (old: {
+    RUST_MIN_STACK = "33554432";
+  });
 
   # Pumpkin loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
   # while the NixOS module installs whitelist.json into the state dir root —
