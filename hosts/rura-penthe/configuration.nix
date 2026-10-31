@@ -124,22 +124,21 @@
   };
 
   # nixpkgs 0.2.0+26.3-26.51 includes the painting spawn fix (#3563/#3564) that
-  # the old c808b52 pin carried. Source stays nixpkgs — but BOTH 0.1.0 and 0.2.0
-  # fail to build with rustc 1.99.0 (flake.lock 31ecbac): rustc stack-overflows
-  # compiling pumpkin-data (huge generated tables + linker-plugin-lto), no
-  # cache.nixos.org hit. rustc's own suggestion is RUST_MIN_STACK=32 MiB, applied
-  # here as a build-env-only override (no src/version/cargoDeps changes). Remove
-  # once nixpkgs/Hydra ships a cached build or upstream fixes the overflow.
-  # RUST_MIN_STACK alone did NOT fix it (verified in the .drv env, still overflowed)
-  # — the "cycle encountered ... recursed 63 times" is a rustc-1.99 bug, and pumpkin
-  # builds with LTO (-C linker-plugin-lto) where it triggers. LTO off via cargo's
-  # env profile override dodges that path; binary size/speed cost is irrelevant here.
-  services.pumpkin.package = pkgs.pumpkin.overrideAttrs (old: {
-    RUST_MIN_STACK = "33554432";
-    # __structuredAttrs: nixpkgs pins env.CARGO_PROFILE_RELEASE_LTO = "thin";
-    # a top-level attr would collide — merge inside env instead.
-    env = (old.env or { }) // { CARGO_PROFILE_RELEASE_LTO = "false"; };
-  });
+  # the old c808b52 pin carried — source stays nixpkgs. But unstable's rustc
+  # 1.99.0 stack-overflows compiling pumpkin-data (rustc bug, LTO- and
+  # stack-size-independent: RUST_MIN_STACK=32 MiB and CARGO_PROFILE_RELEASE_LTO
+  # =false both verified ineffective), and there is no cache.nixos.org hit.
+  # pumpkin's MSRV is 1.96 — stable's 1.95 is too old, but rustc 1.98.1 built
+  # pumpkin-data fine (the h4z734gv era). Swap ONLY the toolchain via a pinned
+  # old nixpkgs (flake input nixpkgs-rustc-1-98); everything else stays
+  # current-unstable. Drop this override when the rustc bug is fixed or a
+  # cached Hydra build appears.
+  services.pumpkin.package = pkgs.pumpkin.override {
+    rustPlatform = pkgs.makeRustPlatform {
+      rustc = inputs.nixpkgs-rustc-1-98.legacyPackages.x86_64-linux.rustc;
+      cargo = inputs.nixpkgs-rustc-1-98.legacyPackages.x86_64-linux.cargo;
+    };
+  };
 
   # Pumpkin loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
   # while the NixOS module installs whitelist.json into the state dir root —

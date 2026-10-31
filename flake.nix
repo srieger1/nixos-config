@@ -50,6 +50,13 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    # Toolchain-only pin for services.pumpkin.package on rura-penthe: unstable's
+    # rustc 1.99.0 stack-overflows (rustc bug, LTO-independent) compiling
+    # pumpkin-data; 1.98.1 (this rev, the 26.11.20261005.494ce7f lock) built it.
+    # Deliberately NO follows — following nixpkgs-unstable would move the
+    # toolchain and defeat the pin. Drop when the overflow is fixed upstream.
+    nixpkgs-rustc-1-98.url = "github:nixos/nixpkgs/494ce7fd23ff6a5dff39e1fb11e9b6f2ac74bf25";
+
     #chaotic.url = "github:chaotic-cx/nyx/nyxpkgs-unstable"; # cachyos kernel etc. # dead
 
     #hyprland.url = "github:hyprwm/Hyprland";
