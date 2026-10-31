@@ -130,8 +130,13 @@
   # cache.nixos.org hit. rustc's own suggestion is RUST_MIN_STACK=32 MiB, applied
   # here as a build-env-only override (no src/version/cargoDeps changes). Remove
   # once nixpkgs/Hydra ships a cached build or upstream fixes the overflow.
+  # RUST_MIN_STACK alone did NOT fix it (verified in the .drv env, still overflowed)
+  # — the "cycle encountered ... recursed 63 times" is a rustc-1.99 bug, and pumpkin
+  # builds with LTO (-C linker-plugin-lto) where it triggers. LTO off via cargo's
+  # env profile override dodges that path; binary size/speed cost is irrelevant here.
   services.pumpkin.package = pkgs.pumpkin.overrideAttrs (old: {
     RUST_MIN_STACK = "33554432";
+    CARGO_PROFILE_RELEASE_LTO = "false";
   });
 
   # Pumpkin loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
