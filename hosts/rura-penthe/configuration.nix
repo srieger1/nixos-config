@@ -136,7 +136,9 @@
   # env profile override dodges that path; binary size/speed cost is irrelevant here.
   services.pumpkin.package = pkgs.pumpkin.overrideAttrs (old: {
     RUST_MIN_STACK = "33554432";
-    CARGO_PROFILE_RELEASE_LTO = "false";
+    # __structuredAttrs: nixpkgs pins env.CARGO_PROFILE_RELEASE_LTO = "thin";
+    # a top-level attr would collide — merge inside env instead.
+    env = (old.env or { }) // { CARGO_PROFILE_RELEASE_LTO = "false"; };
   });
 
   # Pumpkin loads ban/whitelist/ops JSON from <stateDir>/data/ (DATA_FOLDER),
