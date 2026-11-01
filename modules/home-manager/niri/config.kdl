@@ -145,9 +145,9 @@ overview {
     }
 }
 
-// niri-zoom-Overlay nicht an andere Screencopy-Clients (grim, OBS, …)
-// durchreichen, damit Aufnahmen das zoomte Bild nicht doppelt zeigen
-// (siehe niri-zoom INSTALL.md).
+// Don't forward the niri-zoom overlay to other screencopy clients (grim,
+// OBS, ...) so recordings don't show the zoomed image twice
+// (see niri-zoom INSTALL.md).
 layer-rule {
     match namespace="^niri-zoom$"
     block-out-from "screen-capture"
@@ -330,15 +330,15 @@ binds {
 
     Mod+Shift+P { power-off-monitors; }
 
-    // ─── Lupe: niri-zoom (Ctrl+Scroll, zoomt auf einen eingefrorenen Frame) ───
-    // cooldown-ms=0 ist wichtig: ohne throttled niri die Scroll-Events und das
-    // Zoomen fühlt sich zäh an (siehe niri-zoom INSTALL.md).
+    // ─── Magnifier: niri-zoom (Ctrl+Scroll, zooms into a frozen frame) ───
+    // cooldown-ms=0 matters: without it niri throttles the scroll events and
+    // zooming feels sluggish (see niri-zoom INSTALL.md).
     Ctrl+WheelScrollUp   cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "in"; }
     Ctrl+WheelScrollDown cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "out"; }
-    Mod+Ctrl+Z hotkey-overlay-title="Zoom zurücksetzen: niri-zoom" { spawn "/home/flex/.local/bin/niri-zoomctl" "reset"; }
+    Mod+Ctrl+Z hotkey-overlay-title="Reset zoom: niri-zoom" { spawn "/home/flex/.local/bin/niri-zoomctl" "reset"; }
 
-    // ─── Lupe: shmooz (Rechteck-Zoom via Shift+Linksklick-Ziehen) ───
-    // Toggle: läuft schon → beenden, sonst starten. Im Overlay: Scroll = Zoom
-    // am Pointer, Shift+Drag = Rechteck auswählen, Esc/Rechtsklick = Ende.
-    Mod+Shift+Z hotkey-overlay-title="Lupe: shmooz (Rechteck-Zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec shmooz"; }
+    // ─── Magnifier: shmooz (rectangle zoom via Shift+left-click drag) ───
+    // Toggle: already running -> kill it, else start. In the overlay: Scroll =
+    // zoom at pointer, Shift+Drag = select rectangle, Esc/right-click = exit.
+    Mod+Shift+Z hotkey-overlay-title="Magnifier: shmooz (rectangle zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec shmooz"; }
 }

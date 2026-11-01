@@ -46,11 +46,11 @@
     };
   };
 
-  # niri-zoom daemon (Ctrl+Scroll-Lupe): idelt bei ~0% CPU und wartet auf
-  # niri-zoomctl-Kommandos (Binds in config.kdl). systemd statt
-  # spawn-at-startup, damit Crashes neu starten und der Daemon die
-  # Session-Umgebung (WAYLAND_DISPLAY) erbt. Binary liegt experimentell in
-  # ~/.local/bin (aus ~/src/niri-zoom gebaut), nicht im nix Store.
+  # niri-zoom daemon (Ctrl+Scroll magnifier): idles at ~0% CPU waiting for
+  # niri-zoomctl commands (binds in config.kdl). systemd instead of
+  # spawn-at-startup so crashes restart and the daemon inherits the
+  # session environment (WAYLAND_DISPLAY). Binary lives experimentally in
+  # ~/.local/bin (built from ~/src/niri-zoom), not in the nix store.
   systemd.user.services.niri-zoomd = {
     Unit = {
       Description = "niri-zoom zooming daemon";

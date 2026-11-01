@@ -4,6 +4,9 @@
 # so this list and each host's additions merge automatically.
 { pkgs, inputs, ... }:
 {
+  # Copperline comes from overlays/copperline/default.nix (not in nixpkgs).
+  nixpkgs.overlays = [ (import ../../overlays/copperline) ];
+
   users.users.flex.packages = with pkgs; [
     alacritty
     awscli2
@@ -14,6 +17,7 @@
     chromium
     claude-monitor
     containerlab
+    copperline
     curl
     devenv
     dig

@@ -174,6 +174,12 @@ in
   # Set your time zone.
   #time.timeZone = "Europe/Berlin";
   services.automatic-timezoned.enable = true;
+  # Boot race: the daemon starts before geoclue is ready and dies with
+  # FDO(NoReply) -> red FAILED on the boot console. Retry until geoclue is up.
+  systemd.services.automatic-timezoned.serviceConfig = {
+    Restart = "on-failure";
+    RestartSec = 5;
+  };
   time.hardwareClockInLocalTime = true;
 
   #services.xserver.videoDrivers = [ "nvidia" ];
@@ -770,9 +776,10 @@ in
   services.ollama = {
     enable = true;
     package = pkgs.ollama-vulkan;
-    # keep the model resident 24h after each use; gateway bots otherwise
-    # hit a 5-minute idle unload and every request pays a model re-load
-    environmentVariables = { OLLAMA_KEEP_ALIVE = "24h"; };
+    # 2026-10-31: 15 min instead of 24h — 24h kept gpt-oss:20b (15.6 GB) resident
+    # and drove the Oct 31 night into OOM (RAM+swap full, OOM killer killed the
+    # desktop session). 15 min unloads after idle; hermes reloads in seconds on demand.
+    environmentVariables = { OLLAMA_KEEP_ALIVE = "15m"; };
   };
 
   # tailscale/openssh enable live in modules/nixos/desktop-common.nix

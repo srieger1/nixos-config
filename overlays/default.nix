@@ -97,5 +97,7 @@
     #(import ./pympress)
     #(import ./ghostty)
     #(import ./wireplumber)
+
+    # copperline is imported directly from modules/nixos/packages-common.nix
   ];
 }
