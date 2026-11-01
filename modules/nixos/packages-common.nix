@@ -17,7 +17,7 @@
     chromium
     claude-monitor
     containerlab
-    copperline
+    #copperline
     curl
     devenv
     dig
