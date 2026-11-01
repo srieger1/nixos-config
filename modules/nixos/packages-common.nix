@@ -5,7 +5,7 @@
 { pkgs, inputs, ... }:
 {
   # Copperline comes from overlays/copperline/default.nix (not in nixpkgs).
-  nixpkgs.overlays = [ (import ../../overlays/copperline) ];
+  #nixpkgs.overlays = [ (import ../../overlays/copperline) ];
 
   users.users.flex.packages = with pkgs; [
     alacritty
