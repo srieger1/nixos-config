@@ -772,11 +772,25 @@ in
 
   services.fwupd.enable = true;
 
-  # ollama as a system service for the hermes-agent gateway (localhost:11434).
-  # Vulkan build — the same package the user already had in home packages.
+  # ollama as a system service, emergency fallback for hermes (now on omnius:
+  # its fallback_model points at this instance over Tailscale). Vulkan build —
+  # the same package the user already had in home packages.
   services.ollama = {
     enable = true;
     package = pkgs.ollama-vulkan;
+    # Listen on all interfaces so omnius can reach it via the tailnet;
+    # the firewall already restricts inbound to trusted interfaces
+    # (tailscale0 + virbr0), so LAN/guests stay out.
+    host = "0.0.0.0";
+    # Static user instead of the module default (DynamicUser + PrivateUsers):
+    # the Oct 31 manual model migration (rsync ~/.ollama → /var/lib/ollama)
+    # left files owned by the static `ollama` user, which the DynamicUser
+    # userns maps to nobody → "permission denied" at startup. With a static
+    # user the ownership model is stable. NOTE: /var/lib/ollama currently is
+    # a symlink into /var/lib/private/ollama (DynamicUser layout) — untangled
+    # once, see the root commands in the 2026-11-08 session notes.
+    user = "ollama";
+    group = "ollama";
     # 2026-10-31: 15 min instead of 24h — 24h kept gpt-oss:20b (15.6 GB) resident
     # and drove the Oct 31 night into OOM (RAM+swap full, OOM killer killed the
     # desktop session). 15 min unloads after idle; hermes reloads in seconds on demand.

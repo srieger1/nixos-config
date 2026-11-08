@@ -32,8 +32,12 @@
     enable = true;
     gateway.enable = true;
 
-    # Same model/provider layout as caladan's hermes.nix minus the local
-    # ollama fallback (omnius has no ollama; OpenRouter is the only provider).
+    # Same model/provider layout as caladan's hermes.nix, but NO local ollama
+    # fallback: omnius has no ollama (no GPU), and caladan sits in the
+    # hs-fulda tailnet while omnius is in the private one — unreachable.
+    # Re-add later as fallback_model = [{ provider = "custom"; model =
+    # "..."; base_url = "http://<gpu-node>:11434/v1"; }] once a GPU node
+    # (candidate: deep-thought, WoL + 7900XTX) joins the private tailnet.
     settings = {
       model = {
         default = "z-ai/glm-5.3-flash";
