@@ -10,6 +10,7 @@
     ../../modules/home-manager/niri
     ../../modules/home-manager/nextcloud-client.nix
     ../../modules/home-manager/omp
+    ../../modules/home-manager/paseo.nix
     ../../modules/home-manager/ssh
     ../../modules/home-manager/herdr
     ../../modules/home-manager/hermes.nix

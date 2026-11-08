@@ -21,7 +21,10 @@
   home.stateVersion = "26.11";
   programs.home-manager.enable = true;
 
-  imports = [ inputs.hermes-agent.homeManagerModules.default ];
+  imports = [
+    ../../modules/home-manager/paseo.nix
+    inputs.hermes-agent.homeManagerModules.default
+  ];
 
   programs.hermes-agent = {
     enable = true;
@@ -58,20 +61,5 @@
     #   since the gateway MOVES here (same Matrix account, one gateway).
     # - OPENROUTER_API_KEY: unlocks provider "openrouter" above.
     environmentFiles = [ "/home/flex/.config/private/hermes.env" ];
-  };
-
-  systemd.user.services.paseo-daemon = {
-    Unit = {
-      Description = "Paseo daemon (coding agent control surface)";
-      After = [ "network-online.target" ];
-    };
-    Install = {
-      WantedBy = [ "default.target" ];
-    };
-    Service = {
-      ExecStart = "${pkgs.paseo}/bin/paseo daemon run";
-      Restart = "on-failure";
-      RestartSec = 3;
-    };
   };
 }
