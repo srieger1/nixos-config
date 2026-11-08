@@ -45,6 +45,13 @@
       #inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
+    # SSH/Telnet/serial/RDP/VNC client with a network-device workbench
+    # (github.com/FloSch62/muxus; nixpkgs-style package in its nix/ dir).
+    # x86_64-linux only at present (muxus flake packages/devShells).
+    # No `inputs.nixpkgs.follows` here — built from source (no public binary
+    # cache yet), so following us would rebuild it on every nixpkgs bump.
+    muxus.url = "github:FloSch62/muxus";
+
     hermes-agent = {
       url = "github:NousResearch/hermes-agent";
       inputs.nixpkgs.follows = "nixpkgs-unstable";

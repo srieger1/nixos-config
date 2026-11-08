@@ -671,6 +671,7 @@ in
     noctalia # v5 native shell: bar/launcher/control-center/lock-screen, run by the
     # systemd --user service in modules/home-manager/niri/default.nix
     xwayland-satellite # XWayland app support under niri, https://wiki.nixos.org/wiki/Niri#XWayland_apps_not_working
+    inputs.muxus.packages.${pkgs.system}.default # SSH/RDP/VNC client with network-device workbench (own flake input, built from its pinned nixpkgs)
   ];
 
   # conflicts with services.power-profiles-daemon.enable = true;

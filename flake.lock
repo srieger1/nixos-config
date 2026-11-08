@@ -205,6 +205,24 @@
         "type": "github"
       }
     },
+    "muxus": {
+      "inputs": {
+        "nixpkgs": "nixpkgs_3"
+      },
+      "locked": {
+        "lastModified": 1794046208,
+        "narHash": "sha256-bm5uBKzKjXmsQb4Hz27EtNEtxkTspmBVkT/vyM1len0=",
+        "owner": "FloSch62",
+        "repo": "muxus",
+        "rev": "5859faa315491b362d0e8f5ef2809e405a68e3cf",
+        "type": "github"
+      },
+      "original": {
+        "owner": "FloSch62",
+        "repo": "muxus",
+        "type": "github"
+      }
+    },
     "nix-flatpak": {
       "locked": {
         "lastModified": 1790428548,
@@ -286,6 +304,22 @@
       }
     },
     "nixpkgs_3": {
+      "locked": {
+        "lastModified": 1793341285,
+        "narHash": "sha256-Y1CiZ4SoBUjLQyQM/pY+rS2dXD3CHLPstF0lmOc73D4=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1c89083e451e891152365b799595cf7790a43325",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_4": {
       "locked": {
         "lastModified": 1793410479,
         "narHash": "sha256-HzgjxrLY4AEc0044ZuM5CHbLSWLZgDlay1idmzvvpJs=",
@@ -379,8 +413,9 @@
         "home-manager": "home-manager_2",
         "home-manager-unstable": "home-manager-unstable",
         "llm-agents-nix": "llm-agents-nix",
+        "muxus": "muxus",
         "nix-flatpak": "nix-flatpak",
-        "nixpkgs": "nixpkgs_3",
+        "nixpkgs": "nixpkgs_4",
         "nixpkgs-rustc-1-98": "nixpkgs-rustc-1-98",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "sops-nix": "sops-nix"
