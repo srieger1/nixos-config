@@ -3,7 +3,14 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    # 2026-11-08: pinned to 1c89083 (30.10.) — the nixos-unstable head moved
+    # patchelf 0.19.2 → 0.15.2, which breaks hermes-agent's patchelfFixed
+    # workaround (nix/pm-packages.nix fetchpatches NixOS/patchelf@59acc3d9,
+    # written against 0.19.2; 4/6 hunks fail on 0.15.2 → hermes toolchain and
+    # every dependent closure won't build). Unpin once hermes-agent adapts
+    # pm-packages.nix (version-conditional patch or drop), then
+    # `nix flake update nixpkgs-unstable`.
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/1c89083e451e891152365b799595cf7790a43325";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";

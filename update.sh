@@ -17,6 +17,9 @@
 FLAKE="/home/flex/flexos"
 LOG="$FLAKE/log/nixos-update-$HOSTNAME.log"
 DATE=$(date)
+# Without this, `if ! nh os boot ... | tee` tests tee's exit status — a build
+# failure would be swallowed and the broken flake.lock committed+pushed.
+set -o pipefail
 
 # Only caladan is allowed to advance flake.lock (nix flake update, the -u flag
 # below). Running `nix flake update` from multiple hosts and pushing
