@@ -156,11 +156,25 @@
         nixpkgsFlake = nixpkgs-unstable;
         homeManagerInput = inputs.home-manager-unstable;
       };
+      # Proxmox VM running the Paseo daemon + coding agent CLIs (claude code,
+      # omp, pi, opencode) and hermes with its Matrix gateway — the KI-HQ.
+      # Unstable because the agent CLIs move fast (matches caladan). Its eval
+      # also builds the importable Proxmox image — see the packages output
+      # below and hosts/omnius/configuration.nix.
+      omnius = mkHost {
+        hostname = "omnius";
+        nixpkgsFlake = nixpkgs-unstable;
+        homeManagerInput = inputs.home-manager-unstable;
+      };
     };
-    # Proxmox VMA backup archive (vzdump-qemu-rura-penthe.vma.zst) built from
-    # rura-penthe's own eval, importable with `qmrestore`. Same NixOS config as
-    # nixosConfigurations.rura-penthe, so image and deployed system never drift.
-    packages.${system}.rura-penthe-proxmox-image =
-      self.nixosConfigurations.rura-penthe.config.system.build.image;
+    # Proxmox VMA backup archives (vzdump-qemu-<host>.vma.zst) built from each
+    # host's own eval, importable with `qmrestore`. Same NixOS config as the
+    # nixosConfigurations entry, so image and deployed system never drift.
+    packages.${system} = {
+      rura-penthe-proxmox-image =
+        self.nixosConfigurations.rura-penthe.config.system.build.image;
+      omnius-proxmox-image =
+        self.nixosConfigurations.omnius.config.system.build.image;
+    };
   };
 }

@@ -26,7 +26,10 @@
 
    services.hermes-agent = {
      enable = true;
-     gateway.enable = true;
+     # Gateway moved to omnius (2026-11-08): the Matrix channel now runs on the
+     # dedicated agent VM. Two gateways with the same Matrix account would
+     # answer every message twice.
+     gateway.enable = false;
 
      # Model + provider selection (all non-secret, lives in config.yaml):
      # `default` is switchable at runtime (`hermes model`), nix just sets
