@@ -147,6 +147,18 @@
 
   nix.settings.download-buffer-size = 524288000;
 
+  # nh clean handles automatic store GC (daily 06:00); see manual-garbage-collection.sh
+  # as the manual fallback. nix.gc itself is deliberately not used, matching caladan.
+  programs.nh = {
+    enable = true;
+    clean = {
+      enable = true;
+      dates = "06:00"; # Daily at 6 AM
+      extraArgs = "--optimise --keep-since 14d --keep 10";
+    };
+    flake = "/home/flex/flexos";
+  };
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
