@@ -47,6 +47,7 @@
     liboping # noping
     lm_sensors
     lshw
+    minicom
     mininet
     nh
     obs-studio

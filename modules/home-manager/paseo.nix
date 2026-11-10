@@ -12,8 +12,17 @@
 # connections need no pairing/password, auth is the tailnet membership
 # itself (https://paseo.sh/docs/connectivity → Tailscale).
 { pkgs, ... }:
+let
+  # NOTE: paseoPkg must NOT be a module-argument default (`paseoPkg ?
+  # pkgs.paseo` in the signature) — module-arg defaults referencing pkgs
+  # force config evaluation and recurse. Hosts on stable nixpkgs (26.05)
+  # don't ship paseo — they import this module via a direct call passing
+  # `pkgs = inputs.nixpkgs-unstable.legacyPackages.…` (giedi-prime; the
+  # unstable input is pinned for the hermes/patchelf issue, see flake.nix).
+  paseoPkg = pkgs.paseo;
+in
 {
-  home.packages = [ pkgs.paseo ];
+  home.packages = [ paseoPkg ];
 
   systemd.user.services.paseo-daemon = {
     Unit = {
@@ -24,7 +33,7 @@
       WantedBy = [ "default.target" ];
     };
     Service = {
-      ExecStart = "${pkgs.paseo}/bin/paseo daemon run";
+      ExecStart = "${paseoPkg}/bin/paseo daemon run";
       Restart = "on-failure";
       RestartSec = 3;
     };

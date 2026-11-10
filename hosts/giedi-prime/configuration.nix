@@ -175,7 +175,10 @@
     runAsRoot = true;
     swtpm.enable = true;
   };
-  networking.firewall.trustedInterfaces = [ "virbr0" ];
+  # tailscale0: paseo daemon (6767) and future services are reachable from
+  # the private tailnet — giedi-prime is a shared node there (caladan's
+  # share). Everything else keeps the default-deny.
+  networking.firewall.trustedInterfaces = [ "virbr0" "tailscale0" ];
 
   virtualisation.vswitch.resetOnStart = true;
 
