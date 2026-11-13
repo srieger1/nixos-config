@@ -116,6 +116,11 @@
     htop
     git
 
+    # GitHub + file-sync workflow (moved from caladan's daily toolset).
+    gh
+    nextcloud-client # headless: `nextcloudcmd` for one-way syncs
+    rclone           # scriptable WebDAV/Nextcloud sync — agent-friendly
+
     # Coding agent CLIs, driven by the paseo daemon (user service in home.nix).
     omp
     claude-code

@@ -64,6 +64,15 @@
         type = "local";
         path = "/var/lib/atticd/storage";
       };
+
+      # Time-based GC retention. atticd's auto-GC runs every 12h by default,
+      # but default-retention-period defaults to 0 = disabled — the GC ran
+      # and deleted nothing while the filestore grew unbounded to 20G
+      # (disk full on 2026-11-11). 90d ≈ 35G peak at the observed push rate;
+      # pulls by other hosts refresh the access time, so hot NARs survive.
+      garbage-collection = {
+        default-retention-period = "90 days";
+      };
     };
 
     # Module defaults are fine for LAN use: listen [::]:8080. allowed-hosts/
