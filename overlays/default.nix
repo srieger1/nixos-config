@@ -98,6 +98,10 @@
     #(import ./ghostty)
     #(import ./wireplumber)
 
+    # 2026-11-13: vscode 1.144.0 in the pinned nixpkgs-unstable (1c89083e) moved
+    # its bundled ripgrep; remove when the nixpkgs-unstable pin is lifted.
+    (import ./vscode-ripgrep)
+
     # copperline is imported directly from modules/nixos/packages-common.nix
   ];
 }

@@ -47,8 +47,13 @@
 
     # 2026-09-26: unpin — srl-labs fixed the vendorHash via #3389 (merged
     # 0bb144e, hash now xp6YIoq…); see also our PR #3419 (closed as redundant).
+    # 2026-11-13: re-pin to 80224c6d (last good, 0.82.x) — 0.83.0 (f57133d8)
+    # fails to build: vendor/modules.txt lists modules that go.mod no longer
+    # explicitly requires ("is marked as explicit in vendor/modules.txt, but
+    # not explicitly required in go.mod"). Unpin once srl-labs fixes the
+    # vendored tree for 0.83.x.
     containerlab = {
-      url = "github:srl-labs/containerlab";
+      url = "github:srl-labs/containerlab/80224c6d69f530fc3ce173dc06caa02d25b4ddbf";
       #inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
