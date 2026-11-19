@@ -335,10 +335,17 @@ binds {
     // zooming feels sluggish (see niri-zoom INSTALL.md).
     Ctrl+WheelScrollUp   cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "in"; }
     Ctrl+WheelScrollDown cooldown-ms=0 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "out"; }
+    // Touchpads produce AxisSource::Finger events — niri matches WheelScroll*
+    // binds only for real mice (AxisSource::Wheel), so the zoom needs the
+    // separate TouchpadScroll* triggers. cooldown glättet die kontinuierlichen
+    // Touchpad-Events (Maus: 0, da diskrete Ticks).
+    Ctrl+TouchpadScrollUp   cooldown-ms=100 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "in"; }
+    Ctrl+TouchpadScrollDown cooldown-ms=100 hotkey-overlay-title=null { spawn "/home/flex/.local/bin/niri-zoomctl" "out"; }
     Mod+Ctrl+Z hotkey-overlay-title="Reset zoom: niri-zoom" { spawn "/home/flex/.local/bin/niri-zoomctl" "reset"; }
 
     // ─── Magnifier: shmooz (rectangle zoom via Shift+left-click drag) ───
     // Toggle: already running -> kill it, else start. In the overlay: Scroll =
     // zoom at pointer, Shift+Drag = select rectangle, Esc/right-click = exit.
-    Mod+Shift+Z hotkey-overlay-title="Magnifier: shmooz (rectangle zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec shmooz"; }
+    // Absolute path: niri's PATH (from noctalia-greeter) lacks ~/.local/bin.
+    Mod+Shift+Z hotkey-overlay-title="Magnifier: shmooz (rectangle zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec /home/flex/.local/bin/shmooz"; }
 }
