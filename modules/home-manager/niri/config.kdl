@@ -347,5 +347,5 @@ binds {
     // Toggle: already running -> kill it, else start. In the overlay: Scroll =
     // zoom at pointer, Shift+Drag = select rectangle, Esc/right-click = exit.
     // Absolute path: niri's PATH (from noctalia-greeter) lacks ~/.local/bin.
-    Mod+Shift+Z hotkey-overlay-title="Magnifier: shmooz (rectangle zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec /home/flex/.local/bin/shmooz"; }
+    Mod+Z hotkey-overlay-title="Magnifier: shmooz (rectangle zoom)" { spawn-sh "pgrep -x shmooz >/dev/null && pkill -x shmooz || exec /home/flex/.local/bin/shmooz"; }
 }
