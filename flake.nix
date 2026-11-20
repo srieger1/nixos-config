@@ -177,6 +177,9 @@
         hostname = "omnius";
         nixpkgsFlake = nixpkgs-unstable;
         homeManagerInput = inputs.home-manager-unstable;
+        extraModules = [
+          inputs.containerlab.nixosModules.default
+        ];
       };
     };
     # Proxmox VMA backup archives (vzdump-qemu-<host>.vma.zst) built from each

@@ -79,7 +79,7 @@
   users.users.flex = {
     isNormalUser = true;
     description = "Sebastian Rieger";
-    extraGroups = [ "wheel" ];
+    extraGroups = [ "wheel" "docker" ]; # docker: containerlab runtime for agents
     # Keep user services alive at boot without an active login session.
     linger = true;
     openssh.authorizedKeys.keys = [
@@ -127,6 +127,35 @@
     pi-coding-agent
     opencode
     paseo
+  ];
+
+  # containerlab + docker: agents build and deploy network labs on this host
+  # (GitHub repo work). Same wiring as caladan via common.nix — the containerlab
+  # flake module provides programs.containerlab + the pkgs.containerlab overlay.
+  programs.containerlab.enable = true;
+  virtualisation.docker.enable = true;
+
+  # containerlab needs elevated netns/capabilities; NOPASSWD sudo avoids a
+  # password prompt on every lab deploy, across every path containerlab's
+  # binary might resolve to (nix profile symlink vs. system profile vs. PATH).
+  security.sudo.extraRules = [
+    {
+      users = [ "flex" ];
+      commands = [
+        {
+          command = "${pkgs.containerlab}/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/etc/profiles/per-user/flex/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = "/run/current-system/sw/bin/containerlab";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
   ];
 
   system.stateVersion = "26.11"; # Did you read the comment?
