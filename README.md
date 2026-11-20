@@ -40,8 +40,7 @@ Equivalent manual form: `cd ~/flexos && git pull --rebase && nh os boot --impure
 Log in on the machine itself and rebuild locally (`switch` is safe — no desktop):
 
 ```bash
-ssh -A flex@cardassia
-cd ~/flexos && git pull --rebase && nh os switch --impure .
+ssh -A flex@cardassia cd ~/flexos && git pull --rebase && nh os switch --impure .
 ```
 
 ### rura-penthe (Proxmox VM, Pumpkin Minecraft server)
