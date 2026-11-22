@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -38,4 +38,12 @@
   #    proxyJump = "cardassia";
   #  };
   #};
+
+  # 2026-11-22: luciole (noctalia's native Wayland file manager) to try
+  # alongside nautilus, which stays the default handler. Purely additive —
+  # launched from the menu/terminal, nothing points at it yet. If it sticks:
+  # set as default file manager and enable its FileChooser portal backend.
+  home.packages = [
+    inputs.luciole.packages.${pkgs.stdenv.hostPlatform.system}.default
+  ];
 }

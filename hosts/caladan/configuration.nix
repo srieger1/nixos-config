@@ -103,16 +103,62 @@ in
     wantedBy = [ "sleep.target" "suspend.target" "hibernate.target" "hybrid-sleep.target" ];
   };
 
+  # 2026-11-22: plain ExecStart=modprobe was blind: ath11k_pci probe returns
+  # immediately, the real init runs async in the ath11k_qmi_driver_event
+  # workqueue, so the unit reported success while ath11k_dp_alloc failed a
+  # second later with -ENOMEM (needs a 1 MiB contiguous order-8 alloc; right
+  # after s2idle resume memory is too fragmented for that) -> firmware RDDM
+  # crash, radio dead until manual rmmod/modprobe a few minutes later (once
+  # compaction had produced >=1 MiB blocks). Now: modprobe, wait for a wlan
+  # interface, on failure rmmod + force memory compaction + modprobe again.
   systemd.services.ath11k-resume = {
     enable = true;
-    description = "Resume: modprobe ath11k_pci";
+    description = "Resume: modprobe ath11k_pci with DP-alloc-failure retry";
     unitConfig = {
       After = [ "suspend.target" "suspend-then-hibernate.target" "hibernate.target" "hybrid-sleep.target" ];
     };
     serviceConfig = {
       Type = "oneshot";
-      ExecStart = "${pkgs.kmod}/bin/modprobe ath11k_pci";
     };
+    script = ''
+      wait_for_wlan() {
+        # iface appears a few seconds after probe (QMI async init)
+        local i
+        for i in $(seq 1 10); do
+          if ls /sys/class/net 2>/dev/null | grep -q '^wl'; then
+            return 0
+          fi
+          sleep 2
+        done
+        return 1
+      }
+
+      attempt() {
+        ${pkgs.kmod}/bin/modprobe ath11k_pci || return 1
+        wait_for_wlan
+      }
+
+      if attempt; then
+        echo "ath11k-resume: wlan interface up"
+        exit 0
+      fi
+
+      for i in 1 2 3; do
+        echo "ath11k-resume: ath11k init failed (likely DP alloc ENOMEM), retry $i/3"
+        ${pkgs.kmod}/bin/rmmod ath11k_pci || true
+        ${pkgs.kmod}/bin/rmmod ath11k || true
+        sleep 3
+        # free fragmented pages so the order-8 alloc can succeed
+        echo 1 > /proc/sys/vm/compact_memory 2>/dev/null || true
+        if attempt; then
+          echo "ath11k-resume: wlan interface up after retry $i"
+          exit 0
+        fi
+      done
+
+      echo "ath11k-resume: ath11k still down after retries"
+      exit 1
+    '';
     wantedBy = [ "suspend.target" "suspend-then-hibernate.target" "hibernate.target" "hybrid-sleep.target" ];
   };
 
@@ -207,14 +253,16 @@ in
   # niri 26.04 can't mirror outputs, but screen mirroring to a projector
   # (GNOME's Super+P) was actually needed in practice (2026-10-16).
   # Keyring unlock moves via PAM with it: greetd instead of gdm (line ~241).
-  services.greetd = {
+  # 2026-11-22: switched from a hand-rolled greetd default_session to the
+  # nixpkgs module. That also fixes session persistence: the greeter stores
+  # the last selected session in /var/lib/noctalia-greeter/sync.toml, but the
+  # directory never existed (nothing created it), so every boot fell back to
+  # the greeter's default (GNOME) instead of the last used session. The
+  # module creates the dir (tmpfiles 0750 greeter) and sets up the polkit
+  # rule so noctalia can sync appearance without password prompts.
+  services.displayManager.noctalia-greeter = {
     enable = true;
-    settings = {
-      default_session = {
-        command = "${pkgs.noctalia-greeter}/bin/noctalia-greeter-session";
-        user = "greeter";
-      };
-    };
+    passwordlessSyncUsers = [ "flex" ];
   };
   # 2026-10-15 step 1: GDM is off, greetd owns the seat. mkForce because GDM
   # stays enabled in modules/nixos/desktop-common.nix (shared with
@@ -227,6 +275,14 @@ in
   # Paired with noctalia v5 (see modules/home-manager/niri) for
   # bar/launcher/lock. https://wiki.nixos.org/wiki/Niri
   programs.niri.enable = true;
+
+  # 2026-11-22: umbriel (noctalia's wlroots compositor, still unreleased,
+  # nixpkgs builds an unstable snapshot) as an ADDITIONAL session alongside
+  # niri — selectable in the noctalia-greeter, niri stays the default.
+  # Portals: xdg-desktop-portal-gtk/gnome fallback applies (see
+  # modules/home-manager/gtk). If umbriel sticks, swap in
+  # xdg-desktop-portal-umbriel + noctalia-v5-umbriel pairing and review.
+  services.displayManager.sessionPackages = [ pkgs.umbriel ];
   # Explicit here since niri's setup guide calls it out directly; GNOME's
   # module already enables it as a side effect, so this is a no-op for now
   # but matters if GNOME ever gets dropped — GNOME stays as the fallback

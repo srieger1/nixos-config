@@ -64,6 +64,13 @@
     # cache yet), so following us would rebuild it on every nixpkgs bump.
     muxus.url = "github:FloSch62/muxus";
 
+    # Native Wayland file manager from the noctalia family (to try alongside
+    # nautilus, which stays the default). Used via home.packages on caladan.
+    # No `inputs.nixpkgs.follows` — built from source (no public binary cache),
+    # so following us would rebuild it on every nixpkgs-unstable bump (same
+    # rationale as muxus/openlogi above).
+    luciole.url = "github:noctalia-dev/luciole";
+
     hermes-agent = {
       url = "github:NousResearch/hermes-agent";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
