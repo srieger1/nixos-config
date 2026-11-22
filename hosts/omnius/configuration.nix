@@ -79,7 +79,9 @@
   users.users.flex = {
     isNormalUser = true;
     description = "Sebastian Rieger";
-    extraGroups = [ "wheel" "docker" ]; # docker: containerlab runtime for agents
+    # docker: containerlab runtime for agents. clab_admins: group the
+    # containerlab flake module creates (programs.containerlab, see below).
+    extraGroups = [ "wheel" "docker" "clab_admins" ];
     # Keep user services alive at boot without an active login session.
     linger = true;
     openssh.authorizedKeys.keys = [
@@ -115,6 +117,11 @@
     vim
     htop
     git
+
+    # devenv.sh project environments (agents run devenv shells in repo work).
+    # On caladan/giedi-prime this comes via modules/nixos/packages-common.nix;
+    # omnius is self-contained, so it's listed here.
+    devenv
 
     # GitHub + file-sync workflow (moved from caladan's daily toolset).
     gh
