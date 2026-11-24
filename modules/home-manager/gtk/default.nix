@@ -49,7 +49,10 @@
   # home.nix
   xdg.portal = {
     enable = true;
-    extraPortals = with pkgs; lib.mkForce [
+    # No mkForce: the NixOS modules (programs.umbriel etc.) add their own
+    # extraPortals at default priority — forcing this list would silently
+    # drop them (broke umbriel's ScreenCast/Screenshot portal, 2026-11-23).
+    extraPortals = with pkgs; [
       xdg-desktop-portal-gtk # Fallback for both
       #xdg-desktop-portal-hyprland # For Hyprland
       xdg-desktop-portal-gnome # For GNOME

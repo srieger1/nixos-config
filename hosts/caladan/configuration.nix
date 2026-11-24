@@ -279,10 +279,15 @@ in
   # 2026-11-22: umbriel (noctalia's wlroots compositor, still unreleased,
   # nixpkgs builds an unstable snapshot) as an ADDITIONAL session alongside
   # niri — selectable in the noctalia-greeter, niri stays the default.
-  # Portals: xdg-desktop-portal-gtk/gnome fallback applies (see
-  # modules/home-manager/gtk). If umbriel sticks, swap in
-  # xdg-desktop-portal-umbriel + noctalia-v5-umbriel pairing and review.
-  services.displayManager.sessionPackages = [ pkgs.umbriel ];
+  # 2026-11-23: moved from hand-rolled sessionPackages/systemPackages wiring
+  # to the nixpkgs programs.umbriel module. That module also registers the
+  # systemd --user units (systemd.packages) — without them start-umbriel
+  # died silently right after greetd login (observed 2026-11-22, session
+  # exited before producing a single log line) — plus xdg-desktop-portal-
+  # umbriel (ScreenCast/Screenshot; the gnome portal needs mutter and only
+  # works under GNOME sessions) and /share/umbriel/effects via pathsToLink.
+  # Portals: modules/home-manager/gtk keeps gtk/gnome as fallbacks.
+  programs.umbriel.enable = true;
   # Explicit here since niri's setup guide calls it out directly; GNOME's
   # module already enables it as a side effect, so this is a no-op for now
   # but matters if GNOME ever gets dropped — GNOME stays as the fallback
@@ -700,7 +705,7 @@ in
   #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
   #  wget
     vim
-    htop    
+    htop
     nautilus-python
     libimobiledevice # iphone
     ifuse # iphone - optional to mount using ifuse
