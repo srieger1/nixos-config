@@ -263,6 +263,13 @@ in
   services.displayManager.noctalia-greeter = {
     enable = true;
     passwordlessSyncUsers = [ "flex" ];
+    # Explicit de: matches services.xserver.xkb below (and the umbriel
+    # session config in hosts/caladan/home.nix); the greeter's built-in
+    # default is us.
+    settings.keyboard = {
+      layout = "de";
+      model = "pc105";
+    };
   };
   # 2026-10-15 step 1: GDM is off, greetd owns the seat. mkForce because GDM
   # stays enabled in modules/nixos/desktop-common.nix (shared with
