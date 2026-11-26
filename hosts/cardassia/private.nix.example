@@ -11,6 +11,8 @@
 {
   nextcloudHostname = "your.nextcloud.domain.example";
   collaboraHostname = "your.collabora.domain.example";
+  forgejoHostname = "your.forgejo.domain.example";
+  hedgedocHostname = "your.hedgedoc.domain.example";
   cloudflareTunnelId = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx";
   acmeEmail = "your@email.example.com";
   staticIp = "192.168.x.x";

@@ -16,6 +16,8 @@
       ./linkding.nix
       ./rtmp.nix
       ./attic.nix
+      ./forgejo.nix
+      ./hedgedoc.nix
       #./unifi.nix
     ];
 

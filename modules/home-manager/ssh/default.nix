@@ -4,19 +4,24 @@
 # internal HS Fulda network layout (not credentials, but not public either).
 #
 # Source of truth: a small private git repo, self-hosted as a bare repo at
-# cardassia:/root/git/flexos-private.git, cloned to
-# ~/.config/flexos-private-sync on each host. `update.sh` pulls it alongside
-# the flexos flake itself, so caladan/giedi-prime stay in sync the same way
-# they already sync the flake — one `git pull`, no separate sync tool.
+# cardassia:git/flexos-private.git, cloned to ~/.config/flexos-private-sync
+# on each host. `update.sh` pulls it alongside the flexos flake itself, so
+# caladan/giedi-prime stay in sync the same way they already sync the flake
+# — one `git pull`, no separate sync tool.
 #
 # Bootstrap on a new host:
 #   git clone cardassia:git/flexos-private.git ~/.config/flexos-private-sync
 #
-# Absent (e.g. before the first clone) is not an error — this module simply
+# The path uses config.home.homeDirectory (NOT builtins.getEnv "HOME"):
+# rebuilds run under sudo with HOME=/root, where a getEnv-based path would
+# silently disable the module and the next HM activation would then delete
+# a previously managed ~/.ssh/config (happened 25.11.2026).
+#
+# Absent (before the first clone) is not an error — this module simply
 # doesn't manage ~/.ssh/config until the clone exists.
-{ lib, ... }:
+{ config, lib, ... }:
 let
-  path = builtins.toPath (builtins.getEnv "HOME" + "/.config/flexos-private-sync/ssh-config");
+  path = config.home.homeDirectory + "/.config/flexos-private-sync/ssh-config";
 in
 {
   home.file = lib.optionalAttrs (builtins.pathExists path) {
