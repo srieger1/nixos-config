@@ -21,7 +21,9 @@
   services.hedgedoc = {
     enable = true;
     settings = {
-      domain = "https://${private.hedgedocHostname}";
+      # bare hostname — HedgeDoc builds URLs itself; a scheme here mangles
+      # the CSP origin ("https://https//…") and breaks 'self' in script/style-src
+      domain = private.hedgedocHostname;
       host = "127.0.0.1";
       port = 3001;
       protocolUseSSL = true;
