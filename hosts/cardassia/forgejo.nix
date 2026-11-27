@@ -31,6 +31,15 @@
     forceSSL = true;
     enableACME = true;
     acmeRoot = null;
+    # 24744: router forwards this port to cardassia directly — ionos reverse
+    # proxy reaches the new VM here while the 443 forward still points at
+    # cardassia-old (until the nextcloud migration).
+    listen = [
+      {port = 443; addr = "0.0.0.0"; ssl = true;}
+      {port = 24744; addr = "0.0.0.0"; ssl = true;}
+      {port = 443; addr = "[::]"; ssl = true;}
+      {port = 24744; addr = "[::]"; ssl = true;}
+    ];
     locations."/" = {
       proxyPass = "http://127.0.0.1:3000";
       proxyWebsockets = true;
