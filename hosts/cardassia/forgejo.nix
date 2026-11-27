@@ -19,7 +19,7 @@
       server = {
         DOMAIN = private.forgejoHostname;
         ROOT_URL = "https://${private.forgejoHostname}/";
-        HTTP_ADDR = "127.0.0.1";
+        HTTP_ADDR = "0.0.0.0";
         HTTP_PORT = 3000;
       };
       service.DISABLE_REGISTRATION = true;
